@@ -1,0 +1,21 @@
+﻿# --- secrets: never tracked ---
+.env
+
+# --- archived material (frozen legacy RAG era, reference clone, superseded plan) ---
+_archive/
+
+# --- fresh-repo safety: the leaked-key history is preserved locally only ---
+.git_backup/
+
+# --- python caches ---
+__pycache__/
+*.pyc
+
+# --- local build artifacts ---
+*.zip
+tools/*.txt
+
+# NOTE: frontend/vendor/vad/ (Silero VAD runtime: bundle, worklet, ONNX model,
+# ORT wasm) IS REQUIRED AT RUNTIME and must stay tracked. Only the repo-root
+# reference clone /vendor/ (now under _archive/) is excluded — hence the
+# root-anchored pattern below rather than a bare vendor/.

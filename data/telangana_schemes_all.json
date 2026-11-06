@@ -1,0 +1,1957 @@
+{
+  "meta": {
+    "title": "Telangana welfare schemes: grounded source pack for the Gnani helpline",
+    "last_verified": "2026-10-28",
+    "language_note": "Facts and bases are in English; question_te, fail_message_te, notice_te and summary_te are Telugu for direct use in speech.",
+    "confidence_levels": {
+      "high": "Stated by an official government page/portal or by an official order/statement reported consistently by reputable outlets.",
+      "medium": "Reported by one reputable outlet or by explainers that agree with each other. State with care and keep the caveat.",
+      "low": "Single or conflicting secondary report. Never state as fact; use only to say the sources disagree."
+    },
+    "source_tiers": {
+      "official": "Official Telangana/Central government page or portal",
+      "public_broadcaster": "All India Radio (public broadcaster) news report",
+      "major_news": "Established news outlet (reporting a GO, official statement or event)",
+      "secondary": "Aggregator/explainer; use only for low-stakes details and never alone"
+    },
+    "assistant_rules": [
+      "Only state claims that appear in a scheme's facts or criteria, and cite their source_ids.",
+      "status values other than 'active' (disputed, not_confirmed_launched, completed_one_time, active_amount_hike_not_implemented, active_implementation_unclear) must be mentioned before benefits are described.",
+      "For anything listed in unknown_in_sources, say once that published sources do not cover it and point to the official office or portal. Do not guess.",
+      "Facts with confidence 'low' must not be stated as fact.",
+      "Eligibility results use wording like 'appears to meet the published criteria'; final decisions rest with officials."
+    ],
+    "limitations": [
+      "Most sources here are established news outlets reporting government orders; official portals were reachable only for some schemes. Re-check the official page before launch for anything marked medium or low.",
+      "Rythu Bharosa and Indiramma Indlu content is carried over from the user's own verification files (22 Oct 2026) and was not re-fetched.",
+      "Government schemes change often; this pack reflects what could be found on 28 Oct 2026."
+    ]
+  },
+  "schemes": [
+    {
+      "scheme_id": "mahalakshmi_free_bus",
+      "name_en": "Mahalakshmi: Free bus travel for women (TGSRTC)",
+      "name_te": "మహాలక్ష్మి: మహిళలకు ఉచిత బస్సు ప్రయాణం",
+      "category": "women, transport",
+      "status": "active",
+      "status_note": "Running since 9 Dec 2023. Smart-card rollout was announced for 2 June 2026; Aadhaar/ID still accepted per the pre-launch report.",
+      "summary_en": "Women, girls and transgender persons residing in Telangana travel free (zero ticket) in covered TGSRTC buses within the state. No application is needed for the travel itself.",
+      "summary_te": "తెలంగాణలో నివసించే మహిళలు, బాలికలు, ట్రాన్స్‌జెండర్ వ్యక్తులు TGSRTC లోని కొన్ని రకాల బస్సుల్లో రాష్ట్రం లోపల ఉచితంగా ప్రయాణించవచ్చు. ఇందుకోసం ప్రత్యేకంగా దరఖాస్తు చేయాల్సిన అవసరం లేదు.",
+      "facts": [
+        {
+          "id": "launch",
+          "claim": "The free travel scheme started on 9 December 2023.",
+          "confidence": "high",
+          "source_ids": [
+            "sf-mahalakshmi-launch",
+            "air-mahalakshmi-200cr",
+            "pti-free-bus-order"
+          ]
+        },
+        {
+          "id": "who",
+          "claim": "Women, girls and transgender persons who are residents (domiciles) of Telangana are covered.",
+          "confidence": "medium",
+          "source_ids": [
+            "impri-mahalakshmi",
+            "dc-mahalakshmi-smartcard"
+          ]
+        },
+        {
+          "id": "buses_initial",
+          "claim": "The initial government order made travel free in Palle Velugu and Express buses up to the borders of Telangana.",
+          "confidence": "high",
+          "source_ids": [
+            "pti-free-bus-order"
+          ]
+        },
+        {
+          "id": "buses_2026",
+          "claim": "TGSRTC said in March 2026 the scheme operates in about 81% of its buses: Pallevelugu, District Express, City Ordinary and City Metro Express.",
+          "confidence": "high",
+          "source_ids": [
+            "siasat-mahalakshmi-81pct"
+          ]
+        },
+        {
+          "id": "not_covered",
+          "claim": "Deluxe and super luxury buses (and AC buses) are reported as not covered.",
+          "confidence": "medium",
+          "source_ids": [
+            "vikaspedia-free-bus"
+          ],
+          "note": "Exact list of excluded services not seen in an official order; confirm with TGSRTC."
+        },
+        {
+          "id": "id_proof",
+          "claim": "Passengers get a zero-fare ticket by showing an Aadhaar card (or other government ID) to the conductor.",
+          "confidence": "high",
+          "source_ids": [
+            "dc-mahalakshmi-smartcard"
+          ]
+        },
+        {
+          "id": "smart_card",
+          "claim": "A chip-based Mahalakshmi Smart Card (Rs 50 fee, apply at MeeSeva centres or TGSRTC bus pass counters with Aadhaar, passport photo and mobile number) was announced for launch on 2 June 2026; officials said it may become mandatory later.",
+          "confidence": "medium",
+          "source_ids": [
+            "dc-mahalakshmi-smartcard"
+          ],
+          "note": "This is a pre-launch report; the actual rollout status was not confirmed."
+        },
+        {
+          "id": "scale",
+          "claim": "Over 200 crore zero tickets were issued by July 2025; TGSRTC reported more than 290 crore free journeys by March 2026.",
+          "confidence": "high",
+          "source_ids": [
+            "air-mahalakshmi-200cr",
+            "siasat-mahalakshmi-81pct"
+          ]
+        }
+      ],
+      "criteria": [
+        {
+          "id": "woman_girl_or_transgender",
+          "question_te": "మీరు మహిళ, బాలిక లేదా ట్రాన్స్‌జెండర్ వ్యక్తియా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "sf-mahalakshmi-launch",
+          "basis": "Free travel for women, girls and transgender persons.",
+          "fail_message_te": "ఈ పథకం మహిళలు, బాలికలు మరియు ట్రాన్స్‌జెండర్ వ్యక్తుల కోసం మాత్రమే.",
+          "confidence": "high"
+        },
+        {
+          "id": "telangana_resident",
+          "question_te": "మీరు తెలంగాణలో నివసిస్తున్నారా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "impri-mahalakshmi",
+          "basis": "Scheme is for residents (domiciles) of Telangana.",
+          "fail_message_te": "ఈ ఉచిత ప్రయాణం తెలంగాణలో నివసించే వారికి మాత్రమే ఉద్దేశించినది.",
+          "confidence": "medium"
+        },
+        {
+          "id": "covered_bus_type",
+          "question_te": "మీరు ఎక్కే బస్సు పల్లె వెలుగు, ఎక్స్‌ప్రెస్, సిటీ ఆర్డినరీ లేదా సిటీ మెట్రో ఎక్స్‌ప్రెస్ రకమా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "siasat-mahalakshmi-81pct",
+          "basis": "TGSRTC lists Pallevelugu, District Express, City Ordinary and City Metro Express as covered.",
+          "fail_message_te": "డీలక్స్, సూపర్ లగ్జరీ, ఏసీ వంటి ఇతర రకాల బస్సుల్లో ఈ ఉచిత ప్రయాణం వర్తించదని నివేదికలు చెబుతున్నాయి.",
+          "confidence": "high"
+        },
+        {
+          "id": "within_telangana",
+          "question_te": "మీ ప్రయాణం తెలంగాణ రాష్ట్ర సరిహద్దుల లోపలేనా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "pti-free-bus-order",
+          "basis": "Free travel is up to the borders of Telangana.",
+          "fail_message_te": "ఉచిత ప్రయాణం తెలంగాణ సరిహద్దుల వరకు మాత్రమే.",
+          "confidence": "high"
+        }
+      ],
+      "unknown_in_sources": [
+        {
+          "id": "smart_card_mandatory",
+          "topic": "Whether the Mahalakshmi Smart Card has become mandatory and how far the rollout has progressed",
+          "notice_te": "స్మార్ట్ కార్డు తప్పనిసరి అయిందా, ఎంతవరకు అమలైందో ఖచ్చితంగా తెలియదు — బస్సు కండక్టర్ లేదా TGSRTC వద్ద నిర్ధారించుకోండి."
+        },
+        {
+          "id": "excluded_services_list",
+          "topic": "Official complete list of services where the scheme does not apply",
+          "notice_te": "ఏఏ బస్సు సర్వీసుల్లో వర్తించదనే పూర్తి అధికారిక జాబితా నా వద్ద లేదు — TGSRTC వద్ద చూడండి."
+        },
+        {
+          "id": "non_resident_women",
+          "topic": "Rules for women who live outside Telangana or hold a non-Telangana Aadhaar",
+          "notice_te": "తెలంగాణ బయట నివసించే మహిళలకు నియమాలు మూలాల్లో స్పష్టంగా లేవు."
+        }
+      ],
+      "how_to_apply": "No application for the travel. Show Aadhaar or other government ID to the conductor and collect the zero ticket. Smart card: MeeSeva centre or TGSRTC bus pass counter.",
+      "portal": "https://tgsrtc.telangana.gov.in (as named by TGSRTC; not fetched in this pass)"
+    },
+    {
+      "scheme_id": "mahalakshmi_monthly_aid_2500",
+      "name_en": "Mahalakshmi: Rs 2,500 per month for women (promised, not confirmed as launched)",
+      "name_te": "మహాలక్ష్మి: మహిళలకు నెలకు రూ. 2,500 (హామీ; అమలు నిర్ధారణ కాలేదు)",
+      "category": "women, cash assistance",
+      "status": "not_confirmed_launched",
+      "status_note": "Promised in the Congress Six Guarantees. Reputable reports through 2025 describe it as pending. A viral video claiming a Bathukamma rollout was confirmed a deepfake in October 2026. Several aggregator sites claim a 2026 launch, but no reputable report was found. The assistant must NOT tell users it is being paid.",
+      "summary_en": "The Rs 2,500/month assistance is part of the promised Mahalakshmi guarantee. No reputable source found confirms that it has been launched, and its eligibility rules have not been published in any source found.",
+      "summary_te": "నెలకు రూ. 2,500 సాయం మహాలక్ష్మి హామీలో భాగం. అయితే ఇది అమలులోకి వచ్చినట్లు నమ్మదగిన మూలాల్లో నిర్ధారణ కాలేదు, అర్హతా నిబంధనలు కూడా ప్రకటించినట్లు కనిపించలేదు.",
+      "facts": [
+        {
+          "id": "promised",
+          "claim": "Rs 2,500 per month for women is one of the Congress Six Guarantees; Mahalakshmi has three components (free bus travel, Rs 500 gas cylinder, Rs 2,500 monthly aid).",
+          "confidence": "high",
+          "source_ids": [
+            "sf-2500-factcheck",
+            "sf-guarantees-hindu-ktr"
+          ]
+        },
+        {
+          "id": "pending_2025",
+          "claim": "In July 2025 the monthly allowance was reported as long pending since the Congress took office, with the government citing financial challenges.",
+          "confidence": "high",
+          "source_ids": [
+            "hans-2500-pending"
+          ]
+        },
+        {
+          "id": "fact_check",
+          "claim": "A fact-check found that the Rs 2,500 aid had not materialised despite Congress leaders' claims.",
+          "confidence": "medium",
+          "source_ids": [
+            "sf-2500-factcheck"
+          ],
+          "note": "Dated early 2025; later developments should be checked."
+        },
+        {
+          "id": "deepfake_oct2026",
+          "claim": "On 8 October 2026 a viral video of the Chief Minister promising Rs 2,500 monthly aid from Bathukamma and two tolas of gold under Kalyana Lakshmi was reported as officially confirmed to be a deepfake.",
+          "confidence": "medium",
+          "source_ids": [
+            "oneindia-deepfake-2500"
+          ]
+        }
+      ],
+      "criteria": [],
+      "unknown_in_sources": [
+        {
+          "id": "launch_status",
+          "topic": "Whether the Rs 2,500 monthly assistance has been launched and paid anywhere",
+          "notice_te": "రూ. 2,500 నెలవారీ సాయం అమలులోకి వచ్చినట్లు నిర్ధారణ లేదు — అధికారిక ప్రకటన కోసం చూడండి."
+        },
+        {
+          "id": "eligibility",
+          "topic": "Eligibility rules, income limits, application process",
+          "notice_te": "అర్హతలు, ఆదాయ పరిమితి, దరఖాస్తు విధానం ఇంకా ప్రకటించినట్లు మూలాల్లో లేవు."
+        }
+      ],
+      "how_to_apply": "No application process found. Beware of fake messages and videos.",
+      "portal": null
+    },
+    {
+      "scheme_id": "mahalakshmi_lpg_500",
+      "name_en": "Mahalakshmi: LPG cylinder at Rs 500",
+      "name_te": "మహాలక్ష్మి: రూ. 500కే గ్యాస్ సిలిండర్",
+      "category": "women, household, subsidy",
+      "status": "active",
+      "status_note": "Launched 27 Feb 2024 by government order for white ration card holders with active domestic LPG connections.",
+      "summary_en": "Eligible white ration card families with an active domestic LPG connection get a domestic LPG refill at a subsidised Rs 500.",
+      "summary_te": "తెల్ల రేషన్ కార్డు ఉండి, క్రియాశీల గృహ గ్యాస్ కనెక్షన్ ఉన్న కుటుంబాలకు గృహ వినియోగ గ్యాస్ సిలిండర్ రూ. 500కే లభిస్తుంది.",
+      "facts": [
+        {
+          "id": "launch",
+          "claim": "Launched on 27 February 2024 together with Gruha Jyothi.",
+          "confidence": "high",
+          "source_ids": [
+            "sf-lpg-gj-guidelines",
+            "sakshi-lpg-gj",
+            "ap7am-lpg-launch"
+          ]
+        },
+        {
+          "id": "rule_card",
+          "claim": "The government order sanctions a domestic LPG refill at Rs 500 for white ration card (food security card) holders.",
+          "confidence": "high",
+          "source_ids": [
+            "sf-lpg-gj-guidelines",
+            "ap7am-lpg-guidelines"
+          ]
+        },
+        {
+          "id": "rule_connection",
+          "claim": "Beneficiaries must have an active domestic LPG connection.",
+          "confidence": "high",
+          "source_ids": [
+            "ap7am-lpg-launch",
+            "sf-lpg-gj-guidelines"
+          ]
+        },
+        {
+          "id": "praja_palana",
+          "claim": "At launch only those who had applied during Praja Palana were eligible; the Civil Supplies Minister said those who had not applied could still enrol if they hold a white ration card and an LPG connection.",
+          "confidence": "medium",
+          "source_ids": [
+            "ap7am-lpg-launch",
+            "sf-lpg-gj-guidelines"
+          ]
+        },
+        {
+          "id": "scale",
+          "claim": "The minister said about 40 lakh families were expected to benefit.",
+          "confidence": "medium",
+          "source_ids": [
+            "sakshi-lpg-gj"
+          ]
+        }
+      ],
+      "criteria": [
+        {
+          "id": "white_ration_card",
+          "question_te": "మీ కుటుంబానికి తెల్ల రేషన్ కార్డు (ఆహార భద్రతా కార్డు) ఉందా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "sf-lpg-gj-guidelines",
+          "basis": "GO sanctions Rs 500 LPG refill to white ration card (food security card) holders.",
+          "fail_message_te": "ఈ పథకం తెల్ల రేషన్ కార్డు ఉన్న కుటుంబాలకు మాత్రమే.",
+          "confidence": "high"
+        },
+        {
+          "id": "active_lpg_connection",
+          "question_te": "మీకు ప్రస్తుతం క్రియాశీలంగా ఉన్న గృహ వినియోగ గ్యాస్ కనెక్షన్ ఉందా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "ap7am-lpg-launch",
+          "basis": "Eligible households must have an active domestic LPG connection.",
+          "fail_message_te": "ఈ పథకానికి క్రియాశీల గృహ గ్యాస్ కనెక్షన్ ఉండాలి.",
+          "confidence": "high"
+        }
+      ],
+      "unknown_in_sources": [
+        {
+          "id": "connection_holder_name",
+          "topic": "Whether the LPG connection must be in a woman's name (one report says yes; others say in the applicant's name)",
+          "notice_te": "గ్యాస్ కనెక్షన్ మహిళ పేరు మీద ఉండాలా అనే విషయంలో మూలాలు ఒకేలా చెప్పడం లేదు — ధృవీకరించుకోండి."
+        },
+        {
+          "id": "cylinder_cap",
+          "topic": "Annual cap on subsidised cylinders",
+          "notice_te": "సంవత్సరానికి ఎన్ని సిలిండర్లకు వర్తిస్తుందో మూలాల్లో స్పష్టంగా లేదు."
+        },
+        {
+          "id": "payment_mechanism",
+          "topic": "Whether the user pays Rs 500 at delivery or pays full price and gets the difference by transfer",
+          "notice_te": "రూ. 500 చెల్లించే విధానం (డెలివరీ సమయంలోనా, తర్వాత ఖాతాలో జమనా) మూలాల్లో స్పష్టంగా లేదు."
+        },
+        {
+          "id": "current_enrolment",
+          "topic": "Whether new enrolments are open now",
+          "notice_te": "ఇప్పుడు కొత్తగా నమోదు చేసుకునే అవకాశం ఉందో లేదో మూలాల్లో లేదు — గ్యాస్ ఏజెన్సీ/పౌర సరఫరాల శాఖ వద్ద చూడండి."
+        }
+      ],
+      "how_to_apply": "Originally via Praja Palana forms; the minister later said eligible families who had not applied could still enrol. Current procedure not confirmed.",
+      "portal": null
+    },
+    {
+      "scheme_id": "gruha_jyothi",
+      "name_en": "Gruha Jyothi: 200 units of free electricity",
+      "name_te": "గృహ జ్యోతి: 200 యూనిట్ల ఉచిత విద్యుత్",
+      "category": "household, electricity",
+      "status": "active",
+      "status_note": "Government order dated 26 Feb 2024; launched 27 Feb 2024; zero bills started 1 Mar 2024.",
+      "summary_en": "Eligible households with a white ration card get a zero electricity bill for domestic consumption up to 200 units per month on a single service connection.",
+      "summary_te": "తెల్ల రేషన్ కార్డు ఉన్న అర్హ కుటుంబాలకు ఒకే గృహ విద్యుత్ కనెక్షన్‌పై నెలకు 200 యూనిట్ల వరకు వినియోగానికి జీరో బిల్లు వస్తుంది.",
+      "facts": [
+        {
+          "id": "go_date",
+          "claim": "The government order is dated 26 February 2024; the scheme was launched on 27 February 2024 and zero bills began on 1 March 2024.",
+          "confidence": "high",
+          "source_ids": [
+            "siasat-gruha-jyothi-launch",
+            "tnm-gj-start",
+            "sf-lpg-gj-guidelines"
+          ]
+        },
+        {
+          "id": "benefit",
+          "claim": "Eligible households get a zero bill for domestic consumption up to 200 units a month.",
+          "confidence": "high",
+          "source_ids": [
+            "siasat-gruha-jyothi-launch",
+            "tnm-gj-start"
+          ]
+        },
+        {
+          "id": "conditions",
+          "claim": "Households need a white ration card linked with Aadhaar and a single domestic service connection linked to the ration card (USC number from the electricity bill).",
+          "confidence": "high",
+          "source_ids": [
+            "sf-lpg-gj-guidelines",
+            "dtnext-gj-start"
+          ]
+        },
+        {
+          "id": "above_200",
+          "claim": "A household that uses more than 200 units in a month does not get the zero bill for that month, according to reports on the government order.",
+          "confidence": "medium",
+          "source_ids": [
+            "nt-gj-above-200",
+            "siasat-gruha-jyothi-launch"
+          ],
+          "note": "Applies month by month; confirm with the discom."
+        },
+        {
+          "id": "grievance",
+          "claim": "Consumers who believe they qualify but were billed can approach the MPDO office, Municipal Commissioner or the relevant electricity circle office.",
+          "confidence": "medium",
+          "source_ids": [
+            "sf-lpg-gj-guidelines"
+          ]
+        },
+        {
+          "id": "domestic_only",
+          "claim": "The free power applies to domestic use only.",
+          "confidence": "high",
+          "source_ids": [
+            "siasat-gruha-jyothi-launch"
+          ]
+        }
+      ],
+      "criteria": [
+        {
+          "id": "white_ration_card",
+          "question_te": "మీ కుటుంబానికి తెల్ల రేషన్ కార్డు (ఆహార భద్రతా కార్డు) ఉందా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "sf-lpg-gj-guidelines",
+          "basis": "Eligible beneficiaries must hold a valid white ration card.",
+          "fail_message_te": "ఈ పథకం తెల్ల రేషన్ కార్డు ఉన్న కుటుంబాలకు మాత్రమే.",
+          "confidence": "high"
+        },
+        {
+          "id": "ration_card_aadhaar_linked",
+          "question_te": "మీ రేషన్ కార్డు ఆధార్‌తో అనుసంధానమై ఉందా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "dtnext-gj-start",
+          "basis": "White ration card must be linked with Aadhaar.",
+          "fail_message_te": "రేషన్ కార్డు ఆధార్‌తో అనుసంధానం కావాలి.",
+          "confidence": "high"
+        },
+        {
+          "id": "domestic_connection_linked",
+          "question_te": "మీ గృహ విద్యుత్ కనెక్షన్ (ఒకే సర్వీస్ కనెక్షన్) మీ రేషన్ కార్డుతో అనుసంధానమై ఉందా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "sf-lpg-gj-guidelines",
+          "basis": "Single domestic service connection linked to the ration card.",
+          "fail_message_te": "గృహ వినియోగ కనెక్షన్ ఒక్కటే, అది రేషన్ కార్డుతో అనుసంధానమై ఉండాలి.",
+          "confidence": "high"
+        },
+        {
+          "id": "monthly_usage_within_200",
+          "question_te": "మీ నెలవారీ గృహ విద్యుత్ వినియోగం 200 యూనిట్లలోపేనా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "siasat-gruha-jyothi-launch",
+          "basis": "Zero bill for consumption up to 200 units per month.",
+          "fail_message_te": "200 యూనిట్లు దాటిన నెలలో జీరో బిల్లు వర్తించదని నివేదికలు చెబుతున్నాయి.",
+          "confidence": "medium"
+        }
+      ],
+      "unknown_in_sources": [
+        {
+          "id": "income_ceiling",
+          "topic": "Whether any income ceiling applies beyond holding a white ration card",
+          "notice_te": "తెల్ల రేషన్ కార్డు తప్ప ఆదాయ పరిమితి ఉందా అనేది ప్రచురించిన మూలాల్లో లేదు."
+        },
+        {
+          "id": "rented_house",
+          "topic": "Rules for tenants whose connection is in the landlord's name",
+          "notice_te": "అద్దె ఇంట్లో ఉండి కనెక్షన్ యజమాని పేరు మీద ఉన్నవారికి నియమాలు మూలాల్లో లేవు."
+        }
+      ],
+      "how_to_apply": "Originally through Praja Palana. Unlinked eligible consumers can approach MPDO / Municipal Commissioner / electricity circle office with the white ration card and electricity bill.",
+      "portal": null
+    },
+    {
+      "scheme_id": "rajiv_aarogyasri",
+      "name_en": "Rajiv Aarogyasri: health cover up to Rs 10 lakh per family per year",
+      "name_te": "రాజీవ్ ఆరోగ్యశ్రీ: కుటుంబానికి సంవత్సరానికి రూ. 10 లక్షల వరకు వైద్య సాయం",
+      "category": "health",
+      "status": "active",
+      "status_note": "Cover doubled from Rs 5 lakh to Rs 10 lakh from December 2023. Hospital payment disputes were reported in September 2025; confirm current service at the hospital.",
+      "summary_en": "Cashless treatment at empanelled hospitals for BPL families identified through the food security (white ration) card, up to Rs 10 lakh per family per year. The limit is for approved packages, not every expense.",
+      "summary_te": "ఆహార భద్రతా (తెల్ల రేషన్) కార్డు ఉన్న పేద కుటుంబాలకు ఎంపానెల్డ్ ఆసుపత్రుల్లో సంవత్సరానికి కుటుంబానికి రూ. 10 లక్షల వరకు నగదు రహిత చికిత్స. ఇది ఆమోదిత ప్యాకేజీలకే వర్తిస్తుంది, ప్రతి ఖర్చుకు కాదు.",
+      "facts": [
+        {
+          "id": "launch",
+          "claim": "The Rs 10 lakh cover was launched on 9 December 2023 under the Rajiv Aarogyasri / Cheyutha banner; the ceiling earlier was Rs 5 lakh.",
+          "confidence": "high",
+          "source_ids": [
+            "sf-mahalakshmi-launch",
+            "sf-aarogyasri-2025"
+          ]
+        },
+        {
+          "id": "benefit",
+          "claim": "Cashless treatment up to Rs 10 lakh per family per year for BPL households.",
+          "confidence": "high",
+          "source_ids": [
+            "sf-aarogyasri-2025",
+            "dc-budget-2526-aarogyasri"
+          ]
+        },
+        {
+          "id": "reach",
+          "claim": "The Aarogyasri Trust described the scheme as covering over 99 lakh BPL families; the 2025-26 budget coverage said 90.10 lakh BPL families.",
+          "confidence": "medium",
+          "source_ids": [
+            "sf-aarogyasri-2025",
+            "dc-budget-2526-aarogyasri"
+          ],
+          "note": "Figures differ between sources."
+        },
+        {
+          "id": "identification",
+          "claim": "Beneficiaries are identified through the Food Security Card (white ration card) and the Civil Supplies database.",
+          "confidence": "medium",
+          "source_ids": [
+            "ditto-aarogyasri",
+            "sakshi-aarogyasri-orphans"
+          ]
+        },
+        {
+          "id": "package_based",
+          "claim": "Coverage is package-based and depends on hospital empanelment and authorisation; Rs 10 lakh is a limit, not a guarantee that every expense is paid.",
+          "confidence": "medium",
+          "source_ids": [
+            "ditto-aarogyasri"
+          ]
+        },
+        {
+          "id": "orphans",
+          "claim": "In 2025 health cards were extended to orphans for treatment up to Rs 10 lakh; in emergencies an income certificate signed by the Tahsildar can serve as an alternative to a ration card.",
+          "confidence": "medium",
+          "source_ids": [
+            "sakshi-aarogyasri-orphans"
+          ]
+        },
+        {
+          "id": "dues_risk",
+          "claim": "In September 2025 private hospitals threatened to suspend Aarogyasri services over pending dues.",
+          "confidence": "medium",
+          "source_ids": [
+            "sf-aarogyasri-2025"
+          ],
+          "note": "Dated; services may have resumed. Do not state current availability."
+        }
+      ],
+      "criteria": [
+        {
+          "id": "telangana_resident",
+          "question_te": "మీరు తెలంగాణలో నివసిస్తున్నారా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "sf-aarogyasri-2025",
+          "basis": "Scheme is for BPL families of Telangana.",
+          "fail_message_te": "ఈ పథకం తెలంగాణ రాష్ట్ర కుటుంబాల కోసం.",
+          "confidence": "medium"
+        },
+        {
+          "id": "white_ration_card",
+          "question_te": "మీ కుటుంబానికి తెల్ల రేషన్ కార్డు (ఆహార భద్రతా కార్డు) ఉందా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "ditto-aarogyasri",
+          "basis": "Beneficiaries are identified through the Food Security Card database.",
+          "fail_message_te": "సాధారణంగా తెల్ల రేషన్ కార్డు ఉన్న కుటుంబాలకే వర్తిస్తుంది. అనాథల వంటి ప్రత్యేక వర్గాలకు వేరే విధానం ఉండవచ్చు.",
+          "confidence": "medium"
+        }
+      ],
+      "unknown_in_sources": [
+        {
+          "id": "income_property_limits",
+          "topic": "Any separate income or property limits beyond the ration card",
+          "notice_te": "రేషన్ కార్డు తప్ప ప్రత్యేక ఆదాయ/ఆస్తి పరిమితులు మూలాల్లో లేవు."
+        },
+        {
+          "id": "covered_treatments",
+          "topic": "Exact list of treatment packages and any sub-limits",
+          "notice_te": "ఏఏ చికిత్సలు, ఉప-పరిమితులు ఉన్నాయనే పూర్తి జాబితా నా వద్ద లేదు — ఆరోగ్య మిత్ర లేదా ఆసుపత్రిలో అడగండి."
+        },
+        {
+          "id": "current_hospital_service",
+          "topic": "Whether all empanelled private hospitals currently accept Aarogyasri",
+          "notice_te": "ప్రస్తుతం అన్ని ప్రైవేట్ ఆసుపత్రులు ఆరోగ్యశ్రీ తీసుకుంటున్నాయో లేదో మూలాల్లో లేదు."
+        }
+      ],
+      "how_to_apply": "Show the white ration card (and Aadhaar) at an empanelled hospital; the Aarogya Mithra verifies eligibility. Exact current procedure to be confirmed at the hospital.",
+      "portal": null
+    },
+    {
+      "scheme_id": "indiramma_indlu",
+      "name_en": "Indiramma Indlu (housing)",
+      "name_te": "ఇందిరమ్మ ఇల్లు",
+      "category": "housing",
+      "status": "active",
+      "status_note": "Verified by your own verification pass on 22 Oct 2026 against district and state government pages; carried over here.",
+      "summary_en": "Financial assistance of Rs 5 lakh for eligible landless and homeless families (and landowners without a permanent house) to build a permanent house. Families who already own a permanent house are not eligible for fresh sanction.",
+      "summary_te": "ఇల్లు లేని అర్హ కుటుంబాలకు (భూమి ఉండి శాశ్వత ఇల్లు లేనివారికి, భూమి కూడా లేనివారికి) శాశ్వత ఇల్లు కట్టుకోవడానికి రూ. 5 లక్షల ఆర్థిక సహాయం. ఇప్పటికే శాశ్వత ఇల్లు ఉన్నవారికి కొత్తగా మంజూరు ఉండదు.",
+      "facts": [
+        {
+          "id": "what",
+          "claim": "Housing initiative giving financial assistance to eligible landless and homeless families in Telangana to construct permanent houses on their own plots.",
+          "confidence": "high",
+          "source_ids": [
+            "indiramma-indlu-summary",
+            "indiramma-portal"
+          ]
+        },
+        {
+          "id": "amount",
+          "claim": "Assistance is Rs 5 lakh per eligible family.",
+          "confidence": "high",
+          "source_ids": [
+            "indiramma-indlu-summary",
+            "indiramma-mulugu"
+          ]
+        },
+        {
+          "id": "subsidy_wording",
+          "claim": "The Wanaparthy page uses the wording '100% subsidy'; the state portal does not state this percentage, so treat it as the district page's description and not a universal cost guarantee.",
+          "confidence": "medium",
+          "source_ids": [
+            "indiramma-indlu-summary",
+            "indiramma-portal"
+          ]
+        },
+        {
+          "id": "plot",
+          "claim": "Landless beneficiaries MAY receive a 250 sq yd residential plot; this is conditional, not an unconditional entitlement. The state portal states no plot size.",
+          "confidence": "medium",
+          "source_ids": [
+            "indiramma-indlu-summary",
+            "indiramma-mulugu"
+          ]
+        },
+        {
+          "id": "l1_l2_l3",
+          "claim": "Mulugu district page (7 Aug 2025): L1 = owns a small piece of land but no permanent house; L2 = highly prioritised homeless families owning neither land nor house, may receive a free 250 sq yd plot; L3 = already owns a permanent house, ineligible for new sanction.",
+          "confidence": "high",
+          "source_ids": [
+            "indiramma-mulugu"
+          ]
+        },
+        {
+          "id": "monitoring",
+          "claim": "Officials monitor construction through a mobile app with geocoordinates and stage-wise progress.",
+          "confidence": "high",
+          "source_ids": [
+            "indiramma-indlu-summary",
+            "indiramma-portal"
+          ]
+        },
+        {
+          "id": "portal",
+          "claim": "Application/information portal: https://indirammaindlu.telangana.gov.in/",
+          "confidence": "high",
+          "source_ids": [
+            "indiramma-indlu-summary",
+            "indiramma-portal"
+          ]
+        },
+        {
+          "id": "date_caveat",
+          "claim": "The 20 Dec 2023 date on the Wanaparthy page is page metadata, not the scheme launch date.",
+          "confidence": "high",
+          "source_ids": [
+            "indiramma-indlu-summary"
+          ]
+        }
+      ],
+      "criteria": [
+        {
+          "id": "owns_house",
+          "question_te": "మీ కుటుంబానికి ఇప్పుడు సొంత ఇల్లు ఉందా?",
+          "answer_type": "yes_no",
+          "required": "no",
+          "source_id": "indiramma-indlu-summary",
+          "basis": "The Telangana Indiramma Indlu Scheme is a housing initiative that provides financial assistance to eligible, landless, and homeless families in Telangana to construct permanent houses on their own plots.",
+          "fail_message_te": "ఇందిరమ్మ ఇల్లు పథకం ఇప్పుడు సొంత ఇల్లు లేని (homeless) కుటుంబాల కోసం మాత్రమే ఉద్దేశించినది.",
+          "confidence": "high"
+        },
+        {
+          "id": "telangana_family",
+          "question_te": "మీ కుటుంబం తెలంగాణలోనే నివసిస్తుందా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "indiramma-indlu-summary",
+          "basis": "The Telangana Indiramma Indlu Scheme is a housing initiative that provides financial assistance to eligible, landless, and homeless families in Telangana to construct permanent houses on their own plots.",
+          "fail_message_te": "ఈ పథకం తెలంగాణలో నివసించే కుటుంబాల కోసం మాత్రమే ఉద్దేశించినది.",
+          "confidence": "high"
+        }
+      ],
+      "unknown_in_sources": [
+        {
+          "id": "parent_land",
+          "topic": "Whether land owned by parents (for example, a father's land) affects the applicant's eligibility",
+          "notice_te": "తల్లిదండ్రుల పేరిట ఉన్న భూమి అర్హతను ఏమాత్రం ప్రభావితం చేస్తుందో ప్రచురించిన మూలాల్లో పేర్కొనలేదు — అధికారిక పోర్టల్‌లో ధృవీకరించుకోవాలి."
+        },
+        {
+          "id": "joint_family",
+          "topic": "Whether a separate household (living apart from the parents' house) affects eligibility",
+          "notice_te": "కలిసి ఉండటం లేదా విడిపోయి ఉండటం అర్హతపై ఎలా ప్రభావం చూపుతుందో మూలాల్లో పేర్కొనలేదు — అధికారిక పోర్టల్‌లో ధృవీకరించుకోవాలి."
+        },
+        {
+          "id": "category_quota",
+          "topic": "SC/ST/BC or other category-based quotas, reservations, or priority lists",
+          "notice_te": "SC/ST/BC వంటి వర్గాలకు రిజర్వేషన్లు లేదా కోటాల గురించి ప్రచురించిన మూలాల్లో పేర్కొనలేదు — అధికారిక పోర్టల్‌లో ధృవీకరించుకోవాలి."
+        },
+        {
+          "id": "income_limit",
+          "topic": "Any income ceiling or asset/wealth criteria for beneficiaries",
+          "notice_te": "ఆదాయం లేదా ఆస్తి పరిమితుల గురించి ప్రచురించిన మూలాల్లో పేర్కొనలేదు — అధికారిక పోర్టల్‌లో ధృవీకరించుకోవాలి."
+        },
+        {
+          "id": "document_list",
+          "topic": "The list of documents required to apply",
+          "notice_te": "దరఖాస్తుకు కావాల్సిన ఆధారాల జాబితా ప్రచురించిన మూలాల్లో ఇంకా లేదు — అధికారిక పోర్టల్‌లో చూడండి."
+        },
+        {
+          "id": "go_citation",
+          "topic": "Government order number/title for the scheme",
+          "notice_te": "ఈ పథకం ప్రభుత్వ ఉత్తర్వు (GO) సంఖ్య మూలాల్లో లేదు."
+        }
+      ],
+      "how_to_apply": "Via the state portal https://indirammaindlu.telangana.gov.in/ . Document list not in sources.",
+      "portal": "https://indirammaindlu.telangana.gov.in/"
+    },
+    {
+      "scheme_id": "rythu_bharosa",
+      "name_en": "Rythu Bharosa (farmer investment support)",
+      "name_te": "రైతు భరోసా",
+      "category": "agriculture",
+      "status": "active",
+      "status_note": "Carried over from your verification file (checked 22 Oct 2026, Wanaparthy district page last updated 26 Sep 2025). Operational flows (apply, status, check amount) were NOT confirmed on the official portal and are excluded.",
+      "summary_en": "Income support of Rs 6,000 per acre per crop season (Rs 12,000 per acre a year for Rabi and Kharif) by DBT to small/marginal farmers, tenant farmers and agricultural labourers on agriculturally suitable land.",
+      "summary_te": "చిన్న/స్వల్ప రైతులు, కౌలు రైతులు, వ్యవసాయ కూలీలకు వ్యవసాయ యోగ్యమైన భూమికి ఎకరాకు ప్రతి పంట కాలానికి రూ. 6,000 (రబీ, ఖరీఫ్ కలిపి ఏడాదికి రూ. 12,000) నేరుగా బ్యాంకు ఖాతాలో జమ.",
+      "facts": [
+        {
+          "id": "amount",
+          "claim": "Rs 6,000 per acre per crop season; Rs 12,000 per acre annually for Rabi and Kharif.",
+          "confidence": "high",
+          "source_ids": [
+            "rythu-bharosa-wanaparthy-summary"
+          ],
+          "note": "No GO page cited: the GO PDF was a scanned image."
+        },
+        {
+          "id": "dbt",
+          "claim": "Payment is by DBT into registered bank accounts, in phases during crop seasons.",
+          "confidence": "high",
+          "source_ids": [
+            "rythu-bharosa-wanaparthy-summary"
+          ]
+        },
+        {
+          "id": "who",
+          "claim": "Tenant farmers and agricultural labourers are covered, along with small/marginal farmers.",
+          "confidence": "high",
+          "source_ids": [
+            "rythu-bharosa-wanaparthy-summary"
+          ]
+        },
+        {
+          "id": "exclusions",
+          "claim": "Mining, industrial and real-estate land is excluded; only agriculturally suitable land qualifies.",
+          "confidence": "high",
+          "source_ids": [
+            "rythu-bharosa-wanaparthy-summary"
+          ]
+        },
+        {
+          "id": "documents",
+          "claim": "Aadhaar, land/lease proof, bank passbook, ration card, domicile proof, mobile number and PAN are listed as required documents.",
+          "confidence": "high",
+          "source_ids": [
+            "rythu-bharosa-wanaparthy-summary"
+          ]
+        },
+        {
+          "id": "blanket_claim_contradicted",
+          "claim": "The sentence 'all farmers residing in Telangana and owning lands are eligible' is contradicted by the detailed eligibility section and must not be used.",
+          "confidence": "high",
+          "source_ids": [
+            "rythu-bharosa-wanaparthy-summary"
+          ]
+        },
+        {
+          "id": "portal",
+          "claim": "Official portal: https://rythubharosa.telangana.gov.in/",
+          "confidence": "high",
+          "source_ids": [
+            "rythu-bharosa-portal"
+          ]
+        }
+      ],
+      "criteria": [
+        {
+          "id": "telangana_resident",
+          "question_te": "మీరు తెలంగాణలోనే నివసిస్తున్నారా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "rythu-bharosa-wanaparthy-summary",
+          "basis": "To qualify for the Telangana Rythu Bharosa Scheme, applicants must meet the following eligibility criteria: Must be a resident of Telangana.",
+          "fail_message_te": "ఈ పథకం తెలంగాణలో నివసించే కుటుంబాల కోసం మాత్రమే ఉద్దేశించినది.",
+          "confidence": "high"
+        },
+        {
+          "id": "age_18_59",
+          "question_te": "మీ వయసు 18 నుంచి 59 ఏళ్ల మధ్య ఉందా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "rythu-bharosa-wanaparthy-summary",
+          "basis": "To qualify for the Telangana Rythu Bharosa Scheme, applicants must meet the following eligibility criteria: Be between the ages of 18 and 59.",
+          "fail_message_te": "ప్రచురించిన ప్రమాణాల ప్రకారం అర్హత వయసు 18 నుంచి 59 ఏళ్ల మధ్య ఉన్నవారికి మాత్రమే.",
+          "confidence": "high"
+        },
+        {
+          "id": "agri_role",
+          "question_te": "వ్యవసాయానికి అనువైన భూమిపై మీ పాత్ర ఏది — చిన్న లేదా స్వల్ప రైతు (సొంత భూమి), కౌలుకు వ్యవసాయం చేసే రైతు, లేదా వ్యవసాయ కూలీ?",
+          "answer_type": "list",
+          "required": [
+            "small_or_marginal_farmer",
+            "tenant_farmer",
+            "agricultural_labourer"
+          ],
+          "source_id": "rythu-bharosa-wanaparthy-summary",
+          "basis": "To qualify for the Telangana Rythu Bharosa Scheme, applicants must meet the following eligibility criteria: Should be a small or marginal farmer engaged in agriculture; Tenant farmers leasing agricultural land are eligible; Agricultural labourers are eligible; Must own/lease agriculturally suitable lands. Mining areas, industrial zones and real estate lands are excluded.",
+          "fail_message_te": "ఈ పథకం చిన్న/స్వల్ప రైతుల, కౌలు రైతుల, వ్యవసాయ కూలీల కోసం మాత్రమే; గనులు, పరిశ్రమలు, రియల్ ఎస్టేట్ వాడకం ఉన్న భూములు అర్హత పరిధిలో లేవు.",
+          "confidence": "high"
+        }
+      ],
+      "unknown_in_sources": [
+        {
+          "id": "small_marginal_definition",
+          "topic": "Land-size definition of small or marginal farmer used by the scheme",
+          "notice_te": "చిన్న/స్వల్ప రైతు అంటే ఏ భూమి పరిమాణం అనే నిర్వచనం మూలంలో పేర్కొనలేదు — అధికారిక పోర్టల్‌లో ధృవీకరించుకోవాలి."
+        },
+        {
+          "id": "landless_labourer_proof",
+          "topic": "How landless agricultural labourers prove eligibility and what documents they need",
+          "notice_te": "భూమి లేని వ్యవసాయ కూలీలు అర్హతను ఎలా రుజువు చేయాలో మూలాల్లో పేర్కొనలేదు — అధికారిక పోర్టల్‌లో చూడండి."
+        },
+        {
+          "id": "rythu_bandhu_overlap",
+          "topic": "Relationship between Rythu Bharosa and the earlier Rythu Bandhu scheme (who gets what)",
+          "notice_te": "ఇది పాత రైత్ బంధు పథకంతో ఎలా ముడిపడి ఉందో, ఎవరికి ఏది వర్తిస్తుందో మూలంలో స్పష్టంగా లేదు — అధికారిక పోర్టల్‌లో ధృవీకరించుకోవాలి."
+        },
+        {
+          "id": "apply_and_status_flow",
+          "topic": "Online apply, status check and 'check amount' flows (stated on the district page but not confirmed on the official portal)",
+          "notice_te": "ఆన్‌లైన్ దరఖాస్తు, స్థితి తనిఖీ విధానాలు అధికారిక పోర్టల్‌లో నిర్ధారణ కాలేదు — పోర్టల్ లేదా గ్రామ పంచాయతీలో చూడండి."
+        }
+      ],
+      "how_to_apply": "Details not confirmed on the official portal landing page; see portal.",
+      "portal": "https://rythubharosa.telangana.gov.in/"
+    },
+    {
+      "scheme_id": "rythu_bima",
+      "name_en": "Rythu Bima (farmers' group life insurance, Rs 5 lakh)",
+      "name_te": "రైతు బీమా (రూ. 5 లక్షల జీవిత బీమా)",
+      "category": "agriculture, insurance",
+      "status": "disputed",
+      "status_note": "Operational status is DISPUTED. Telangana Today (4 Sep and 4 Oct 2026) reports the state had not paid the LIC premium and claims were pending. The government's side was not found. Do not assure users that the cover is currently in force.",
+      "summary_en": "Free life insurance of Rs 5 lakh for pattadar farmers aged 18 to 59, paid to the nominee on the farmer's death from any cause; the government pays the premium to LIC. Reports in Sep-Oct 2026 say renewal premium payment is in doubt.",
+      "summary_te": "18 నుంచి 59 ఏళ్ల మధ్య ఉన్న పట్టాదారు రైతు ఏ కారణంతో మరణించినా నామినీకి రూ. 5 లక్షల బీమా; ప్రీమియం ప్రభుత్వమే LICకి చెల్లిస్తుంది. అయితే ఈ ఏడాది ప్రీమియం చెల్లింపుపై సందేహాలున్నట్లు వార్తలు వచ్చాయి.",
+      "facts": [
+        {
+          "id": "benefit",
+          "claim": "Rs 5 lakh insurance cover to the farmer's nominee on death due to any cause, including natural death.",
+          "confidence": "high",
+          "source_ids": [
+            "myscheme-rythu-bima",
+            "tt-bima-premium-sep2026"
+          ]
+        },
+        {
+          "id": "premium",
+          "claim": "The entire premium is paid by the government to LIC; the farmer pays nothing.",
+          "confidence": "high",
+          "source_ids": [
+            "myscheme-rythu-bima"
+          ]
+        },
+        {
+          "id": "age",
+          "claim": "Farmers aged 18 to 59 are eligible; a court judgment extract says age is counted as on 15 August of the enrolment year.",
+          "confidence": "high",
+          "source_ids": [
+            "myscheme-rythu-bima",
+            "livelaw-lic-bima"
+          ]
+        },
+        {
+          "id": "pattadar",
+          "claim": "Enrolled farmers are pattadars (land-owning farmers).",
+          "confidence": "medium",
+          "source_ids": [
+            "livelaw-lic-bima"
+          ]
+        },
+        {
+          "id": "premium_dispute",
+          "claim": "Telangana Today reported on 4 Sep 2026 that the state had failed to pay the premium, halting the programme, and on 4 Oct 2026 that the last date to pay LIC was 14 August with premium unpaid and claims pending or returned.",
+          "confidence": "medium",
+          "source_ids": [
+            "tt-bima-premium-sep2026",
+            "tt-bima-claims-oct2026"
+          ],
+          "note": "Single outlet; government response not found. Re-check before stating status."
+        }
+      ],
+      "criteria": [
+        {
+          "id": "telangana_resident_farmer",
+          "question_te": "మీరు తెలంగాణలో వ్యవసాయం చేసే రైతా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "myscheme-rythu-bima",
+          "basis": "Farmers of Telangana are eligible.",
+          "fail_message_te": "ఈ పథకం తెలంగాణ రైతులకు మాత్రమే.",
+          "confidence": "high"
+        },
+        {
+          "id": "pattadar",
+          "question_te": "మీ పేరు మీద పట్టాదారు పాస్‌బుక్ ఉందా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "livelaw-lic-bima",
+          "basis": "Eligible farmers are pattadars.",
+          "fail_message_te": "ఈ బీమాకు పట్టాదారు రైతు అయి ఉండాలి.",
+          "confidence": "medium"
+        },
+        {
+          "id": "age_18_59",
+          "question_te": "మీ వయసు 18 నుంచి 59 ఏళ్ల మధ్య ఉందా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "myscheme-rythu-bima",
+          "basis": "Farmers aged 18 to 59 are eligible.",
+          "fail_message_te": "అర్హత వయసు 18 నుంచి 59 ఏళ్ల మధ్య మాత్రమే.",
+          "confidence": "high"
+        }
+      ],
+      "unknown_in_sources": [
+        {
+          "id": "current_renewal",
+          "topic": "Whether the 2026-27 premium has been paid and the cover is in force",
+          "notice_te": "ఈ సంవత్సరం ప్రీమియం చెల్లించి బీమా అమలులో ఉందో లేదో నిర్ధారణ లేదు — వ్యవసాయ శాఖ అధికారిని అడగండి."
+        },
+        {
+          "id": "claim_procedure",
+          "topic": "Documents and steps for claiming",
+          "notice_te": "క్లెయిమ్ చేసే విధానం, అవసరమైన పత్రాల వివరాలు మూలాల్లో లేవు."
+        },
+        {
+          "id": "non_pattadar",
+          "topic": "Whether tenant farmers or forest-right (RoFR) patta holders are covered",
+          "notice_te": "కౌలు రైతులు లేదా అటవీ హక్కుల పట్టాదారులకు వర్తిస్తుందో మూలాల్లో స్పష్టత లేదు."
+        }
+      ],
+      "how_to_apply": "Farmers are enrolled by the agriculture department; no premium. Claim via nominee with documents (details not confirmed).",
+      "portal": null
+    },
+    {
+      "scheme_id": "rythu_runa_mafi",
+      "name_en": "Rythu Runa Mafi (crop loan waiver up to Rs 2 lakh)",
+      "name_te": "రైతు రుణమాఫీ (రూ. 2 లక్షల వరకు)",
+      "category": "agriculture, debt relief",
+      "status": "completed_one_time",
+      "status_note": "One-time waiver implemented in phases in July-August 2024. No open application window was found. Disputes about farmers left out continue.",
+      "summary_en": "Short-term crop loans taken between 12 Dec 2018 and 9 Dec 2023 were waived up to Rs 2 lakh per family (principal plus interest), with a ration card required for the family. The government says 22.37 lakh farmers got Rs 17,934 crore; the opposition says many were excluded.",
+      "summary_te": "2018 డిసెంబర్ 12 నుంచి 2023 డిసెంబర్ 9 మధ్య తీసుకున్న స్వల్పకాలిక పంట రుణాలు కుటుంబానికి రూ. 2 లక్షల వరకు మాఫీ చేశారు. ఇది ఒకసారి అమలైన పథకం.",
+      "facts": [
+        {
+          "id": "cabinet",
+          "claim": "Cabinet approved waiving crop loans up to Rs 2 lakh per farmer for loans taken between 12 December 2018 and 9 December 2023.",
+          "confidence": "high",
+          "source_ids": [
+            "dc-runamafi-cabinet",
+            "air-runamafi-go"
+          ]
+        },
+        {
+          "id": "guidelines",
+          "claim": "Guidelines (July 2024): ceiling Rs 2 lakh per family including principal and interest; short-term loans from scheduled commercial banks, RRBs and DCCBs; waived bottom-up; ration card mandatory; not applicable to SHG, JLG, Rythu Mitra Groups, LECs or rescheduled loans.",
+          "confidence": "high",
+          "source_ids": [
+            "sf-runamafi-guidelines",
+            "air-runamafi-go"
+          ]
+        },
+        {
+          "id": "phases",
+          "claim": "The remaining waiver up to Rs 2 lakh was released on 15 August 2024 as the third phase.",
+          "confidence": "high",
+          "source_ids": [
+            "sf-runamafi-ground"
+          ]
+        },
+        {
+          "id": "govt_claim",
+          "claim": "The government claimed it waived Rs 2 lakh crop loans of 22.37 lakh farmers at a cost of Rs 17,934 crore; the BRS said lakhs were left out.",
+          "confidence": "medium",
+          "source_ids": [
+            "sf-one-year-govt"
+          ],
+          "note": "Government claim vs opposition claim; present as claims."
+        }
+      ],
+      "criteria": [
+        {
+          "id": "loan_period",
+          "question_te": "మీరు 2018 డిసెంబర్ 12 నుంచి 2023 డిసెంబర్ 9 మధ్య పంట రుణం తీసుకున్నారా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "dc-runamafi-cabinet",
+          "basis": "Loans taken between 12 Dec 2018 and 9 Dec 2023.",
+          "fail_message_te": "ఈ కాలంలో తీసుకున్న రుణాలకే మాఫీ వర్తించింది.",
+          "confidence": "high"
+        },
+        {
+          "id": "loan_type",
+          "question_te": "ఆ రుణం షెడ్యూల్డ్ వాణిజ్య బ్యాంకు, గ్రామీణ బ్యాంకు లేదా జిల్లా సహకార బ్యాంకు నుంచి తీసుకున్న స్వల్పకాలిక పంట రుణమా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "air-runamafi-go",
+          "basis": "Short-term loans from scheduled commercial banks, RRBs and DCCBs.",
+          "fail_message_te": "దీర్ఘకాలిక, రీషెడ్యూల్ చేసిన లేదా సంఘాల (SHG/JLG) రుణాలకు మాఫీ వర్తించదు.",
+          "confidence": "high"
+        },
+        {
+          "id": "ration_card",
+          "question_te": "మీ కుటుంబానికి రేషన్ కార్డు ఉందా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "sf-runamafi-guidelines",
+          "basis": "Ration card was made mandatory for the family to avail the waiver.",
+          "fail_message_te": "మాఫీకి కుటుంబానికి రేషన్ కార్డు తప్పనిసరి చేశారు.",
+          "confidence": "high"
+        }
+      ],
+      "unknown_in_sources": [
+        {
+          "id": "new_applications",
+          "topic": "Whether any new or appeal applications are accepted in 2026",
+          "notice_te": "ఇప్పుడు కొత్త దరఖాస్తులు లేదా అభ్యంతరాల స్వీకరణ ఉందో లేదో మూలాల్లో లేదు — బ్యాంకు/వ్యవసాయ అధికారిని అడగండి."
+        },
+        {
+          "id": "left_out_remedy",
+          "topic": "Grievance process for farmers who say they were left out",
+          "notice_te": "మాఫీ రాలేదని భావించే రైతులకు ఫిర్యాదు విధానం మూలాల్లో స్పష్టంగా లేదు."
+        }
+      ],
+      "how_to_apply": "Closed one-time exercise; use the bank or agriculture department for grievances.",
+      "portal": null
+    },
+    {
+      "scheme_id": "cheyutha_aasara_pensions",
+      "name_en": "Cheyutha (Aasara) social security pensions",
+      "name_te": "చేయూత (ఆసరా) పింఛన్లు",
+      "category": "social security, pensions",
+      "status": "active_amount_hike_not_implemented",
+      "status_note": "The promised Rs 4,000 old-age pension had not been implemented as of 1 Oct 2026 per Telangana Today (via a secondary summary). Current rates: Rs 2,016 for most categories, Rs 4,016 for disability. Sources disagree on some details; see facts.",
+      "summary_en": "Monthly pension of Rs 2,016 for old age (57+), widows and other listed categories, and Rs 4,016 for persons with disabilities. The Rs 4,000 promise is not yet implemented.",
+      "summary_te": "వృద్ధాప్య (57 ఏళ్లు పైబడినవారు), వితంతు మరియు ఇతర వర్గాలకు నెలకు రూ. 2,016, దివ్యాంగులకు రూ. 4,016. రూ. 4,000 హామీ ఇంకా అమలు కాలేదు.",
+      "facts": [
+        {
+          "id": "rates",
+          "claim": "Published monthly rates: old age Rs 2,016, widow Rs 2,016, disability Rs 4,016.",
+          "confidence": "medium",
+          "source_ids": [
+            "cheyutha-report-oct2026",
+            "schemeshelper-cheyutha",
+            "ditto-aasara"
+          ]
+        },
+        {
+          "id": "hike_not_done",
+          "claim": "The proposed increase of the old-age pension from Rs 2,016 to Rs 4,000 was reported as not implemented as of 1 October 2026.",
+          "confidence": "medium",
+          "source_ids": [
+            "cheyutha-report-oct2026"
+          ],
+          "note": "Secondary summary of a Telangana Today report; verify before stating as final."
+        },
+        {
+          "id": "promise",
+          "claim": "A Rs 4,000 monthly pension is among the promises criticised as unfulfilled by the opposition.",
+          "confidence": "medium",
+          "source_ids": [
+            "sf-guarantees-hindu-ktr"
+          ]
+        },
+        {
+          "id": "age_57",
+          "claim": "Old-age pension eligibility starts at 57 years in several explainers (earlier 65).",
+          "confidence": "medium",
+          "source_ids": [
+            "ditto-aasara"
+          ],
+          "note": "Confirm with the local MPDO/municipal office."
+        },
+        {
+          "id": "disability",
+          "claim": "Persons with disabilities: no minimum age, SADAREM-certified disability of 40% or more (51% for hearing impairment) per one explainer.",
+          "confidence": "medium",
+          "source_ids": [
+            "ditto-aasara"
+          ]
+        },
+        {
+          "id": "categories",
+          "claim": "Categories reported: old age, widows, single women, weavers, toddy tappers, beedi workers, HIV/AIDS and filaria patients, persons with disabilities.",
+          "confidence": "medium",
+          "source_ids": [
+            "ditto-aasara",
+            "schemeshelper-cheyutha"
+          ]
+        },
+        {
+          "id": "conflicting_reports",
+          "claim": "Some older/low-quality reports claim the Rs 4,000 and Rs 6,000 amounts were already paid; this conflicts with the 1 Oct 2026 report and is not used.",
+          "confidence": "low",
+          "source_ids": [
+            "cheyutha-report-oct2026"
+          ]
+        }
+      ],
+      "criteria": [
+        {
+          "id": "telangana_resident",
+          "question_te": "మీరు తెలంగాణలో నివసిస్తున్నారా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "ditto-aasara",
+          "basis": "Applicants must be Telangana residents.",
+          "fail_message_te": "ఈ పింఛన్లు తెలంగాణ నివాసులకు మాత్రమే.",
+          "confidence": "medium"
+        },
+        {
+          "id": "category",
+          "question_te": "మీరు ఏ వర్గానికి చెందుతారు — వృద్ధులు, వితంతువు, ఒంటరి మహిళ, నేత కార్మికులు, గీత కార్మికులు, బీడీ కార్మికులు, HIV/ఫైలేరియా బాధితులు, లేదా దివ్యాంగులు?",
+          "answer_type": "list",
+          "required": [
+            "old_age",
+            "widow",
+            "single_woman",
+            "weaver",
+            "toddy_tapper",
+            "beedi_worker",
+            "hiv_aids",
+            "filaria",
+            "disabled"
+          ],
+          "source_id": "ditto-aasara",
+          "basis": "Pension is for notified categories only.",
+          "fail_message_te": "ఈ పింఛన్లు నిర్దేశిత వర్గాలకు మాత్రమే.",
+          "confidence": "medium"
+        },
+        {
+          "id": "old_age_57_plus",
+          "question_te": "మీ వయసు 57 ఏళ్లు లేదా అంతకంటే ఎక్కువా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "ditto-aasara",
+          "basis": "Old-age pension eligibility reported as 57 years and above.",
+          "fail_message_te": "వృద్ధాప్య పింఛన్‌కు 57 ఏళ్లు నిండి ఉండాలని నివేదికలు చెబుతున్నాయి.",
+          "confidence": "medium",
+          "applies_if": "category == old_age"
+        },
+        {
+          "id": "disability_40_plus",
+          "question_te": "మీకు సదరం ధృవీకరణతో 40% లేదా అంతకంటే ఎక్కువ వైకల్యం ఉందా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "ditto-aasara",
+          "basis": "SADAREM-certified disability of 40% or more (51% for hearing impairment).",
+          "fail_message_te": "దివ్యాంగ పింఛన్‌కు సదరం ధృవీకరణతో నిర్దేశిత శాతం వైకల్యం ఉండాలి.",
+          "confidence": "medium",
+          "applies_if": "category == disabled"
+        }
+      ],
+      "unknown_in_sources": [
+        {
+          "id": "income_asset_criteria",
+          "topic": "Exact income and asset screening/exclusion criteria",
+          "notice_te": "ఆదాయ, ఆస్తి పరిమితులపై ఖచ్చితమైన నిబంధనలు మూలాల్లో నిర్ధారణ కాలేదు — MPDO/మున్సిపల్ కార్యాలయంలో అడగండి."
+        },
+        {
+          "id": "other_pension_rule",
+          "topic": "Whether a person already receiving another pension is excluded",
+          "notice_te": "మరో పింఛన్ పొందుతున్నవారికి నియమం మూలాల్లో నిర్ధారణ కాలేదు."
+        },
+        {
+          "id": "hike_timeline",
+          "topic": "When or whether the Rs 4,000 pension will start",
+          "notice_te": "రూ. 4,000 పింఛన్ ఎప్పుడు ప్రారంభమవుతుందో తెలియదు."
+        },
+        {
+          "id": "application_window",
+          "topic": "How and when new applicants can apply",
+          "notice_te": "కొత్తగా ఎప్పుడు, ఎలా దరఖాస్తు చేయాలనే వివరాలు మూలాల్లో నిర్ధారణ కాలేదు."
+        }
+      ],
+      "how_to_apply": "Offline via Gram Panchayat / municipal office per explainers; status via the Cheyutha (SSPTG) portal. Not confirmed from an official page in this pass.",
+      "portal": null
+    },
+    {
+      "scheme_id": "kalyana_lakshmi_shaadi_mubarak",
+      "name_en": "Kalyana Lakshmi / Shaadi Mubarak (marriage assistance)",
+      "name_te": "కళ్యాణలక్ష్మి / షాదీ ముబారక్",
+      "category": "women, marriage assistance",
+      "status": "active",
+      "status_note": "Running since 2 Oct 2014. The promised gold (tula) addition was not found in any reputable report; a viral video claiming it was confirmed a deepfake in Oct 2026.",
+      "summary_en": "One-time marriage assistance of Rs 1,00,116 for brides aged 18 or more from eligible families (Kalyana Lakshmi for SC/ST/BC/EBC, Shaadi Mubarak for minorities), with parents' combined annual income up to Rs 2 lakh.",
+      "summary_te": "18 ఏళ్లు నిండిన అర్హ వధువులకు వివాహ సమయంలో ఒకసారి రూ. 1,00,116 సహాయం (SC/ST/BC/EBC లకు కళ్యాణలక్ష్మి, మైనారిటీలకు షాదీ ముబారక్). తల్లిదండ్రుల మొత్తం వార్షిక ఆదాయం రూ. 2 లక్షల లోపు ఉండాలి.",
+      "facts": [
+        {
+          "id": "launch",
+          "claim": "Launched on 2 October 2014 to support marriage expenses and discourage child marriage; assistance is conditional on the bride being at least 18.",
+          "confidence": "high",
+          "source_ids": [
+            "tt-kl-12years",
+            "cgg-kl"
+          ]
+        },
+        {
+          "id": "amount",
+          "claim": "Assistance is Rs 1,00,116 per bride.",
+          "confidence": "medium",
+          "source_ids": [
+            "housing-kl",
+            "tt-kl-12years"
+          ],
+          "note": "Amount repeated by many explainers; confirm on ePASS."
+        },
+        {
+          "id": "disabled",
+          "claim": "Parents of disabled girls get Rs 1,25,145 under the Shaadi Mubarak listing on the national MyScheme portal.",
+          "confidence": "high",
+          "source_ids": [
+            "myscheme-sms"
+          ]
+        },
+        {
+          "id": "income",
+          "claim": "The combined annual income of the bride's parents should be less than Rs 2 lakh.",
+          "confidence": "high",
+          "source_ids": [
+            "myscheme-sms"
+          ]
+        },
+        {
+          "id": "one_time",
+          "claim": "It is one-time assistance, available only once in a lifetime.",
+          "confidence": "high",
+          "source_ids": [
+            "myscheme-sms"
+          ]
+        },
+        {
+          "id": "unmarried",
+          "claim": "The scheme is for unmarried girls aged 18 or more.",
+          "confidence": "high",
+          "source_ids": [
+            "myscheme-sms"
+          ]
+        },
+        {
+          "id": "how",
+          "claim": "Applicants apply online through the Telangana ePASS website under Kalyana Lakshmi / Shaadi Mubarak.",
+          "confidence": "high",
+          "source_ids": [
+            "myscheme-sms"
+          ]
+        },
+        {
+          "id": "beneficiaries",
+          "claim": "16.78 lakh beneficiaries by October 2026.",
+          "confidence": "high",
+          "source_ids": [
+            "tt-kl-12years"
+          ]
+        },
+        {
+          "id": "gold_not_added",
+          "claim": "No reputable report found that gold has been added to the assistance; a viral video claiming this was reported as a deepfake on 8 Oct 2026.",
+          "confidence": "medium",
+          "source_ids": [
+            "oneindia-deepfake-2500"
+          ]
+        }
+      ],
+      "criteria": [
+        {
+          "id": "telangana_resident",
+          "question_te": "వధువు తెలంగాణ నివాసి నా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "myscheme-sms",
+          "basis": "Scheme is for residents of Telangana.",
+          "fail_message_te": "ఈ పథకం తెలంగాణ నివాసులకు మాత్రమే.",
+          "confidence": "high"
+        },
+        {
+          "id": "bride_18_plus_unmarried",
+          "question_te": "వధువు వయసు 18 ఏళ్లు లేదా అంతకంటే ఎక్కువా, మరియు ఇది ఆమె మొదటి వివాహమా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "myscheme-sms",
+          "basis": "Unmarried girls aged 18 or more.",
+          "fail_message_te": "వధువుకు వివాహ సమయానికి 18 ఏళ్లు నిండి ఉండాలి.",
+          "confidence": "high"
+        },
+        {
+          "id": "community",
+          "question_te": "వధువు SC, ST, BC, EBC లేదా మైనారిటీ వర్గానికి చెందినవారా?",
+          "answer_type": "list",
+          "required": [
+            "sc",
+            "st",
+            "bc",
+            "ebc",
+            "minority"
+          ],
+          "source_id": "cgg-kl",
+          "basis": "Kalyana Lakshmi for SC/ST (later BC/EBC); Shaadi Mubarak for minorities.",
+          "fail_message_te": "ఈ పథకం నిర్దేశిత వర్గాలకు మాత్రమే.",
+          "confidence": "medium"
+        },
+        {
+          "id": "parents_income_under_2_lakh",
+          "question_te": "వధువు తల్లిదండ్రుల మొత్తం వార్షిక ఆదాయం రూ. 2 లక్షల లోపేనా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "myscheme-sms",
+          "basis": "Combined annual income of parents less than Rs 2 lakh.",
+          "fail_message_te": "తల్లిదండ్రుల మొత్తం వార్షిక ఆదాయం రూ. 2 లక్షల లోపు ఉండాలి.",
+          "confidence": "high"
+        }
+      ],
+      "unknown_in_sources": [
+        {
+          "id": "bc_rural_limit",
+          "topic": "Whether a lower income limit (Rs 1.5 lakh) applies to rural BC/EBC applicants (one explainer says so)",
+          "notice_te": "గ్రామీణ BC/EBC లకు ఆదాయ పరిమితి రూ. 1.5 లక్షలా అనే విషయం ఒక్క మూలంలోనే ఉంది — ePASS లో నిర్ధారించుకోండి."
+        },
+        {
+          "id": "application_deadline",
+          "topic": "Time limit to apply before or after marriage",
+          "notice_te": "వివాహానికి ముందు/తర్వాత ఎంత గడువులోపు దరఖాస్తు చేయాలనేది మూలాల్లో నిర్ధారణ కాలేదు."
+        },
+        {
+          "id": "gold_promise",
+          "topic": "Whether the manifesto promise of gold has been implemented",
+          "notice_te": "కళ్యాణలక్ష్మి కింద బంగారం హామీ అమలైనట్లు నమ్మదగిన మూలాల్లో లేదు."
+        }
+      ],
+      "how_to_apply": "Online through Telangana ePASS (telanganaepass.cgg.gov.in) under Kalyana Lakshmi / Shaadi Mubarak.",
+      "portal": "https://telanganaepass.cgg.gov.in/"
+    },
+    {
+      "scheme_id": "rajiv_yuva_vikasam",
+      "name_en": "Rajiv Yuva Vikasam (self-employment subsidy for youth)",
+      "name_te": "రాజీవ్ యువ వికాసం",
+      "category": "youth, self-employment",
+      "status": "active_implementation_unclear",
+      "status_note": "Launched 17 Mar 2025. About 16.25 lakh applications received; sources conflict on subsidy slabs and age limits, and implementation progress is unclear.",
+      "summary_en": "Bank-linked subsidy for unemployed youth from SC, ST, BC, EBC and minority communities to start self-employment units, reported as up to Rs 3-4 lakh. Slabs reported differ between sources.",
+      "summary_te": "SC, ST, BC, EBC, మైనారిటీ వర్గాల నిరుద్యోగ యువతకు స్వయం ఉపాధి యూనిట్లు ప్రారంభించడానికి బ్యాంకు రుణంతో కలిపి సబ్సిడీ (రూ. 3–4 లక్షల వరకు అని నివేదికలు). సబ్సిడీ శ్లాబులపై మూలాలు ఒకేలా లేవు.",
+      "facts": [
+        {
+          "id": "launch",
+          "claim": "The Chief Minister launched Rajiv Yuva Vikasam on 17 March 2025.",
+          "confidence": "high",
+          "source_ids": [
+            "air-ryv-launch"
+          ]
+        },
+        {
+          "id": "what",
+          "claim": "Young people can receive concessional loans of up to Rs 4 lakh along with subsidies to set up businesses or self-employment units.",
+          "confidence": "high",
+          "source_ids": [
+            "cgg-ryv"
+          ]
+        },
+        {
+          "id": "income",
+          "claim": "Income limit reported as Rs 1.5 lakh per year in rural areas and Rs 2 lakh in urban areas.",
+          "confidence": "high",
+          "source_ids": [
+            "dc-ryv-cibil",
+            "siasat-ryv-slabs"
+          ]
+        },
+        {
+          "id": "age",
+          "claim": "Age limit reported as 21 to 60 for rural and 21 to 55 for urban applicants by one outlet; another explainer says 21-55 (21-60 for agriculture units).",
+          "confidence": "medium",
+          "source_ids": [
+            "dc-ryv-cibil"
+          ],
+          "note": "Conflicting; do not state a single age band as certain."
+        },
+        {
+          "id": "slabs_conflict",
+          "claim": "Subsidy slab reports differ: one lists 100% up to Rs 50,000, 90% up to Rs 1 lakh, 80% up to Rs 2 lakh, 70% up to Rs 4 lakh; another says 80% to Rs 1 lakh, 70% to Rs 2 lakh and 60% to Rs 3 lakh; another says 60% for Rs 3-4 lakh.",
+          "confidence": "low",
+          "source_ids": [
+            "siasat-ryv-slabs",
+            "adda-ryv",
+            "siasat-ryv-cibil"
+          ],
+          "note": "Do not quote a slab to users until verified on the official portal."
+        },
+        {
+          "id": "applications",
+          "claim": "About 16.25 lakh people applied and a large share were expected to be rejected.",
+          "confidence": "medium",
+          "source_ids": [
+            "siasat-ryv-cibil"
+          ]
+        },
+        {
+          "id": "cibil",
+          "claim": "Reports say a CIBIL score requirement applies for the bank-linked part.",
+          "confidence": "medium",
+          "source_ids": [
+            "siasat-ryv-cibil",
+            "dc-ryv-cibil"
+          ]
+        }
+      ],
+      "criteria": [
+        {
+          "id": "telangana_resident",
+          "question_te": "మీరు తెలంగాణలో నివసిస్తున్నారా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "cgg-ryv",
+          "basis": "Scheme is for young people of Telangana.",
+          "fail_message_te": "ఈ పథకం తెలంగాణ యువతకు మాత్రమే.",
+          "confidence": "high"
+        },
+        {
+          "id": "unemployed",
+          "question_te": "మీరు ప్రస్తుతం నిరుద్యోగులా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "air-ryv-launch",
+          "basis": "Scheme supports unemployed youth in self-employment.",
+          "fail_message_te": "ఈ పథకం నిరుద్యోగ యువతకు ఉద్దేశించినది.",
+          "confidence": "medium"
+        },
+        {
+          "id": "community",
+          "question_te": "మీరు SC, ST, BC, EBC లేదా మైనారిటీ వర్గానికి చెందినవారా?",
+          "answer_type": "list",
+          "required": [
+            "sc",
+            "st",
+            "bc",
+            "ebc",
+            "minority"
+          ],
+          "source_id": "siasat-ryv-slabs",
+          "basis": "Reported target communities.",
+          "fail_message_te": "ఈ పథకం నిర్దేశిత వర్గాల యువతకు మాత్రమే అని నివేదికలు చెబుతున్నాయి.",
+          "confidence": "medium"
+        },
+        {
+          "id": "family_income",
+          "question_te": "మీ కుటుంబ వార్షిక ఆదాయం గ్రామీణ ప్రాంతంలో రూ. 1.5 లక్షలు లేదా పట్టణ ప్రాంతంలో రూ. 2 లక్షల లోపేనా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "dc-ryv-cibil",
+          "basis": "Income Rs 1.5 lakh (rural) and Rs 2 lakh (urban).",
+          "fail_message_te": "కుటుంబ ఆదాయ పరిమితి గ్రామీణంలో రూ. 1.5 లక్షలు, పట్టణంలో రూ. 2 లక్షలు.",
+          "confidence": "high"
+        }
+      ],
+      "unknown_in_sources": [
+        {
+          "id": "age_band",
+          "topic": "Exact age band (21-55 vs 21-60 for rural/agriculture)",
+          "notice_te": "వయో పరిమితిపై మూలాలు ఒకేలా చెప్పడం లేదు (21–55 లేదా 21–60) — అధికారిక పోర్టల్‌లో చూడండి."
+        },
+        {
+          "id": "subsidy_slabs",
+          "topic": "Official subsidy percentage for each unit-cost slab",
+          "notice_te": "యూనిట్ ఖర్చును బట్టి సబ్సిడీ శాతం మూలాల్లో వేర్వేరుగా ఉంది — అధికారిక పోర్టల్‌లో ధృవీకరించుకోండి."
+        },
+        {
+          "id": "grounding_status",
+          "topic": "Whether units have been sanctioned and grounded",
+          "notice_te": "యూనిట్ల మంజూరు, అమలు ఎంతవరకు జరిగిందో నిర్ధారణ లేదు."
+        }
+      ],
+      "how_to_apply": "Online through the OBMMS portal (tgobmms.cgg.gov.in) per reports; application window may be closed.",
+      "portal": "https://tgobmms.cgg.gov.in/"
+    },
+    {
+      "scheme_id": "ration_cards_fine_rice",
+      "name_en": "New ration cards and free fine rice (6 kg per person)",
+      "name_te": "కొత్త రేషన్ కార్డులు మరియు ఉచిత సన్న బియ్యం (ఒక్కొక్కరికి 6 కిలోలు)",
+      "category": "food security",
+      "status": "active",
+      "status_note": "A white ration card (food security card) is the gateway to several other schemes (Gruha Jyothi, LPG Rs 500, Aarogyasri, loan waiver).",
+      "summary_en": "Eligible families hold food security cards and receive 6 kg of fine rice per person per month free. New card issuance began in 2025 after a long gap.",
+      "summary_te": "ఆహార భద్రతా కార్డు ఉన్న అర్హ కుటుంబాలకు ఒక్కొక్కరికి నెలకు 6 కిలోల సన్న బియ్యం ఉచితంగా లభిస్తుంది. 2025లో చాలా ఏళ్ల తర్వాత కొత్త కార్డుల జారీ మొదలైంది.",
+      "facts": [
+        {
+          "id": "fine_rice",
+          "claim": "6 kg of fine rice per person per month is given free through fair price shops to about 3.1 crore people (about 84% of the population) at a cost of over Rs 13,000 crore a year (Civil Supplies Minister, July 2025).",
+          "confidence": "high",
+          "source_ids": [
+            "uni-fine-rice-2025",
+            "sf-ration-cards-july2025"
+          ]
+        },
+        {
+          "id": "new_cards_start",
+          "claim": "New ration card issuance and name additions began from 26 January 2025; mass distribution of new cards was launched in mid-July 2025 (reports give 13 or 14 July).",
+          "confidence": "high",
+          "source_ids": [
+            "sf-ration-cards-july2025",
+            "uni-fine-rice-2025",
+            "siasat-ration-jan2025"
+          ]
+        },
+        {
+          "id": "names_added",
+          "claim": "About 17 lakh new names were added to existing cards between February and May 2025, and applications were taken through MeeSeva centres.",
+          "confidence": "high",
+          "source_ids": [
+            "siasat-ration-17lakh"
+          ]
+        },
+        {
+          "id": "numbers_2026",
+          "claim": "As of August 2026 the Civil Supplies Minister said there were 1,06,28,092 food security cards covering 3.43 crore beneficiaries, with 16,32,810 new cards issued since 26 Jan 2025.",
+          "confidence": "high",
+          "source_ids": [
+            "uni-ration-cards-aug2026"
+          ]
+        },
+        {
+          "id": "smart_cards",
+          "claim": "A move to smart ration cards was announced in August 2026.",
+          "confidence": "medium",
+          "source_ids": [
+            "uni-ration-cards-aug2026"
+          ]
+        },
+        {
+          "id": "rules_followed",
+          "claim": "The minister in charge said no new criteria were laid down for new cards and past eligibility rules would be followed.",
+          "confidence": "medium",
+          "source_ids": [
+            "siasat-ration-jan2025"
+          ]
+        }
+      ],
+      "criteria": [
+        {
+          "id": "telangana_resident",
+          "question_te": "మీరు తెలంగాణలో నివసిస్తున్నారా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "sf-ration-cards-july2025",
+          "basis": "Cards are issued to residents of Telangana.",
+          "fail_message_te": "ఈ కార్డులు తెలంగాణ నివాసులకు మాత్రమే.",
+          "confidence": "medium"
+        }
+      ],
+      "unknown_in_sources": [
+        {
+          "id": "income_land_limits",
+          "topic": "Exact income and land-holding limits for a food security card (a Dec 2024 report mentions proposed limits of Rs 1.5 lakh rural / Rs 2 lakh urban income and under 3.5 acres dry or 7.5 acres wet land; later statements said past rules apply)",
+          "notice_te": "ఆదాయం, భూమి పరిమితులపై తుది నిబంధనలు మూలాల్లో నిర్ధారణ కాలేదు (గ్రామీణంలో రూ. 1.5 లక్షలు, పట్టణంలో రూ. 2 లక్షలు అని ప్రతిపాదనలు వచ్చాయి) — MeeSeva/పౌర సరఫరాల కార్యాలయంలో ధృవీకరించుకోండి."
+        },
+        {
+          "id": "application_process_now",
+          "topic": "Current application window and documents",
+          "notice_te": "ఇప్పుడు కొత్త కార్డుకు ఎలా దరఖాస్తు చేయాలి, ఏ పత్రాలు కావాలనేది మూలాల్లో నిర్ధారణ కాలేదు."
+        },
+        {
+          "id": "smart_card_timeline",
+          "topic": "Smart card rollout schedule",
+          "notice_te": "స్మార్ట్ రేషన్ కార్డుల పంపిణీ తేదీలు మూలాల్లో నిర్ధారణ కాలేదు."
+        }
+      ],
+      "how_to_apply": "Through MeeSeva centres / civil supplies offices; current procedure not confirmed.",
+      "portal": null
+    }
+  ],
+  "sources": {
+    "adda-ryv": {
+      "title": "Telangana government launches Rajiv Yuva Vikasam scheme",
+      "publisher": "Adda247 Current Affairs",
+      "url": "https://currentaffairs.adda247.com/telangana-government-launches-rajiv-yuva-vikasam-scheme-to-boost-self-employment/",
+      "date": "2025",
+      "tier": "secondary"
+    },
+    "air-mahalakshmi-200cr": {
+      "title": "Mahalakshmi Scheme crosses 200 crore free bus rides",
+      "publisher": "All India Radio News",
+      "url": "https://www.newsonair.gov.in/mahalakshmi-scheme-crosses-200-crore-free-bus-rides-in-telangana-women-save-%E2%82%B96700-crore",
+      "date": "2025-07-23",
+      "tier": "public_broadcaster"
+    },
+    "air-runamafi-go": {
+      "title": "Telangana government issued GO listing guidelines for crop loan waiver",
+      "publisher": "All India Radio News",
+      "url": "https://newsonair.gov.in/telangana-government-issued-go-listing-out-guidelines-for-implementation-of-crop-loan-waiver",
+      "date": "2024-07-16",
+      "tier": "public_broadcaster"
+    },
+    "air-ryv-launch": {
+      "title": "Telangana CM launches Rajiv Yuva Vikasam",
+      "publisher": "All India Radio News",
+      "url": "https://www.newsonair.gov.in/telangana-cm-launches-rajiv-yuva-vikasam-to-boost-self-employment-for-youth",
+      "date": "2025-03-18",
+      "tier": "public_broadcaster"
+    },
+    "ap7am-lpg-guidelines": {
+      "title": "Telangana Govt Announces Guidelines for Rs. 500 Gas Cylinder Scheme",
+      "publisher": "AP7AM",
+      "url": "https://www.ap7am.com/en/75961/telangana-govt-announces-guidelines-for-rs-500-gas-cylinder-scheme",
+      "date": "2024-02",
+      "tier": "secondary"
+    },
+    "ap7am-lpg-launch": {
+      "title": "Congress government in Telangana implements two more guarantees",
+      "publisher": "AP7AM (wire report)",
+      "url": "https://www.ap7am.com/en/75977/congress-government-in-telangana-implements-two-more-guarantees",
+      "date": "2024-02-27",
+      "tier": "secondary"
+    },
+    "cgg-kl": {
+      "title": "Kalyana Lakshmi - Shaadi Mubarak",
+      "publisher": "CGG, Govt of Telangana",
+      "url": "https://www.cgg.gov.in/it_project/kalyana-lakshmi-shaadi-mubarak/",
+      "tier": "official"
+    },
+    "cgg-ryv": {
+      "title": "Rajiv Yuva Vikasam",
+      "publisher": "CGG, Govt of Telangana",
+      "url": "https://www.cgg.gov.in/it_project/rajiv-yuva-vikasam/",
+      "tier": "official"
+    },
+    "cheyutha-report-oct2026": {
+      "title": "Cheyutha Pension Payment Status and Latest Updates (cites Telangana Today, 1 Oct 2026)",
+      "publisher": "cheyuthapension.in",
+      "url": "https://cheyuthapension.in/cheyutha-pension-payment-status/",
+      "date": "2026-10",
+      "tier": "secondary"
+    },
+    "dc-budget-2526-aarogyasri": {
+      "title": "Telangana Budget 2025-26 live",
+      "publisher": "Deccan Chronicle",
+      "url": "https://deccanchronicle.com/buzz/live-telangana-budget-2025-26-to-be-presented-in-assembly-on-wednesday-1458",
+      "date": "2025-03-19",
+      "tier": "major_news"
+    },
+    "dc-mahalakshmi-smartcard": {
+      "title": "Mahalakshmi Smart Cards To Be Launched On June 2",
+      "publisher": "Deccan Chronicle",
+      "url": "https://www.deccanchronicle.com/southern-states/telangana/telangana-rtc-mahalakshmi-smart-cards-for-free-bus-travel-how-and-where-to-apply-1959859",
+      "date": "2026-05",
+      "tier": "major_news"
+    },
+    "dc-runamafi-cabinet": {
+      "title": "Telangana Cabinet okays Rs 2 lakh crop loan waiver",
+      "publisher": "Deccan Chronicle",
+      "url": "https://deccanchronicle.com/telangana-cabinet-okays-rs-2-lakh-crop-loan-waiver-with-rs-31000-cr-spend",
+      "date": "2024-06-22",
+      "tier": "major_news"
+    },
+    "dc-ryv-cibil": {
+      "title": "Bhatti's word falls flat: banks insist on CIBIL",
+      "publisher": "Deccan Chronicle",
+      "url": "https://deccanchronicle.com/southern-states/telangana/bhatti-word-falls-flat-banks-insist-on-cibil-1881738",
+      "date": "2025",
+      "tier": "major_news"
+    },
+    "ditto-aarogyasri": {
+      "title": "Rajiv Aarogyasri: eligibility, coverage, application",
+      "publisher": "Ditto Insurance",
+      "url": "https://joinditto.in/articles/health-insurance/rajiv-aarogyasri/",
+      "date": "2026-07",
+      "tier": "secondary"
+    },
+    "ditto-aasara": {
+      "title": "Aasara Pension Scheme Telangana: eligibility and amount",
+      "publisher": "Ditto Insurance",
+      "url": "https://joinditto.in/articles/general/aasara-pension-scheme/",
+      "date": "2026-09",
+      "tier": "secondary"
+    },
+    "dtnext-gj-start": {
+      "title": "Telangana starts implementing Gruha Jyothi scheme",
+      "publisher": "DT Next / IANS",
+      "url": "https://www.dtnext.in/news/national/telangana-starts-implementing-gruha-jyothi-scheme-771192",
+      "date": "2024-03-01",
+      "tier": "major_news"
+    },
+    "hans-2500-pending": {
+      "title": "Mahalakshmi scheme: Decision on Rs 2.5K monthly payout to women likely",
+      "publisher": "The Hans India",
+      "url": "https://www.thehansindia.com/telangana/mahalakshmi-scheme-decision-on-rs-25k-monthly-payout-to-women-likely-990453",
+      "date": "2025-07",
+      "tier": "major_news"
+    },
+    "housing-kl": {
+      "title": "Kalyana Lakshmi scheme: documents, eligibility and key details",
+      "publisher": "Housing.com",
+      "url": "https://housing.com/news/kalyana-lakshm-scheme",
+      "tier": "secondary"
+    },
+    "impri-mahalakshmi": {
+      "title": "What does Mahalakshmi scheme reveal about women's mobility in Telangana?",
+      "publisher": "IMPRI",
+      "url": "https://iprr.impriindia.com/?p=3664",
+      "tier": "secondary"
+    },
+    "indiramma-indlu-summary": {
+      "title": "Wanaparthy District: Indiramma Indlu Scheme",
+      "publisher": "Wanaparthy District, Govt of Telangana",
+      "url": "https://wanaparthy.telangana.gov.in/scheme/indiramma-indlu-scheme/",
+      "tier": "official"
+    },
+    "indiramma-mulugu": {
+      "title": "Mulugu District: Indiramma Indlu",
+      "publisher": "Mulugu District, Govt of Telangana",
+      "url": "https://mulugu.telangana.gov.in/scheme/indiramma-indlu/",
+      "tier": "official"
+    },
+    "indiramma-portal": {
+      "title": "Indiramma Indlu state portal",
+      "publisher": "Govt of Telangana",
+      "url": "https://indirammaindlu.telangana.gov.in/",
+      "tier": "official"
+    },
+    "livelaw-lic-bima": {
+      "title": "Court judgment extract on Rythu Bima enrolment rules",
+      "publisher": "LiveLaw (PDF)",
+      "url": "https://livelaw.in/pdf_upload/lic-548122.pdf",
+      "tier": "major_news"
+    },
+    "myscheme-rythu-bima": {
+      "title": "Rythu Bima Scheme",
+      "publisher": "MyScheme (Govt of India portal)",
+      "url": "https://myscheme.gov.in/schemes/rythu-bima",
+      "tier": "official"
+    },
+    "myscheme-sms": {
+      "title": "Shaadi Mubarak Scheme",
+      "publisher": "MyScheme (Govt of India portal)",
+      "url": "https://myscheme.gov.in/hi/schemes/sms",
+      "tier": "official"
+    },
+    "nt-gj-above-200": {
+      "title": "Gruha Jyothi zero bill rule (newspaper e-paper clipping)",
+      "publisher": "Namasthe Telangana / Telangana Today e-paper",
+      "url": "https://epapercdn.ntnews.com/NT/2024/03/10/TTE/5_01/2aaab99147382af2_01.pdf",
+      "date": "2024-03-10",
+      "tier": "major_news"
+    },
+    "oneindia-deepfake-2500": {
+      "title": "Revanth Reddy Rs 2,500 aid / 2 tulas gold video confirmed deepfake",
+      "publisher": "Oneindia Telugu",
+      "url": "https://telugu.oneindia.com/news/telangana/cm-revanth-reddy-on-rs-2-500-aid-for-women-2tulas-gold-in-kalyana-lakshmi-from-bathukamma-deepfake-509703.html",
+      "date": "2026-10-08",
+      "tier": "major_news"
+    },
+    "pti-free-bus-order": {
+      "title": "Telangana govt to launch free bus travel for women scheme on December 9 (PTI)",
+      "publisher": "Udayavani / PTI",
+      "url": "https://udayavani.com/?p=1571891",
+      "date": "2023-12-09",
+      "tier": "major_news"
+    },
+    "rythu-bharosa-portal": {
+      "title": "Telangana Rythu Bharosa portal",
+      "publisher": "Govt of Telangana",
+      "url": "https://rythubharosa.telangana.gov.in/",
+      "tier": "official"
+    },
+    "rythu-bharosa-wanaparthy-summary": {
+      "title": "Wanaparthy District: Rythu Bharosa Scheme",
+      "publisher": "Wanaparthy District, Govt of Telangana",
+      "url": "https://wanaparthy.telangana.gov.in/scheme/rythu-bharosa-scheme/",
+      "tier": "official"
+    },
+    "sakshi-aarogyasri-orphans": {
+      "title": "Telangana extends Aarogyasri to orphans",
+      "publisher": "Sakshi Post",
+      "url": "https://www.sakshipost.com/news/telangana/telangana-extends-aarogyasri-orphans-andhra-grapples-systemic-collapse-408922",
+      "date": "2025-05",
+      "tier": "major_news"
+    },
+    "sakshi-lpg-gj": {
+      "title": "Free electricity, Rs 500 gas cylinder schemes, conditions apply",
+      "publisher": "Sakshi Post",
+      "url": "https://www.sakshipost.com/news/congress-government-telangana-implements-two-more-guarantees-277489",
+      "date": "2024-02-27",
+      "tier": "major_news"
+    },
+    "schemeshelper-cheyutha": {
+      "title": "Cheyutha Pension Telangana 2026",
+      "publisher": "SchemesHelper",
+      "url": "https://schemeshelper.com/cheyutha-pension-telangana/",
+      "date": "2026-09",
+      "tier": "secondary"
+    },
+    "sf-2500-factcheck": {
+      "title": "Congress claims 90 lakh women receive Rs 2,500 in Telangana: Here's the reality",
+      "publisher": "The South First",
+      "url": "https://thesouthfirst.com/telangana/congress-claims-90-lakh-women-receive-rs-2500-in-telangana-heres-the-reality/",
+      "date": "2025-01",
+      "tier": "major_news"
+    },
+    "sf-aarogyasri-2025": {
+      "title": "As talks fail, Telangana private hospitals to suspend Aarogyasri services over pending dues",
+      "publisher": "The South First",
+      "url": "https://thesouthfirst.com/news/as-talks-fail-telangana-private-hospitals-to-suspend-aarogyasri-services-over-pending-dues",
+      "date": "2025-09-17",
+      "tier": "major_news"
+    },
+    "sf-guarantees-hindu-ktr": {
+      "title": "KTR says Revanth made Rahul lie about promises (The Hindu via PressReader)",
+      "publisher": "The Hindu",
+      "url": "https://www.pressreader.com/india/the-hindu-international-9BN2/20240506/281651080189161",
+      "date": "2024-05-06",
+      "tier": "major_news"
+    },
+    "sf-lpg-gj-guidelines": {
+      "title": "LPG cylinder at Rs 500, free power up to 200 units: Guarantees launched in Telangana",
+      "publisher": "The South First",
+      "url": "https://thesouthfirst.com/telangana/lpg-cylinder-at-%E2%82%B9500-free-power-up-to-200-units-guarantees-launched-in-telangana/",
+      "date": "2024-02-27",
+      "tier": "major_news"
+    },
+    "sf-mahalakshmi-launch": {
+      "title": "Congress govt in Telangana flags off Mahalakshmi scheme",
+      "publisher": "The South First",
+      "url": "https://thesouthfirst.com/topstory/congress-govt-in-telangana-flags-off-mahalakshmi-scheme-offering-women-free-rides-on-state-run-buses/",
+      "date": "2023-12-09",
+      "tier": "major_news"
+    },
+    "sf-one-year-govt": {
+      "title": "Unfulfilled promises, discontent, graft charges as Congress set to celebrate one year of governance",
+      "publisher": "The South First",
+      "url": "https://thesouthfirst.com/news/unfulfilled-promises-discontent-graft-charges-as-congress-set-to-celebrate-one-year-of-governance-in-telangana",
+      "date": "2024-12",
+      "tier": "major_news"
+    },
+    "sf-ration-cards-july2025": {
+      "title": "Telangana CM launches ration card distribution",
+      "publisher": "The South First",
+      "url": "https://thesouthfirst.com/news/no-bribes-no-brokers-telangana-cm-revanth-launches-ration-card-distribution-to-cover-3-crore-people-in-record-welfare-drive",
+      "date": "2025-07-13",
+      "tier": "major_news"
+    },
+    "sf-runamafi-ground": {
+      "title": "Ground report: the wait for loan waiver is agonising for several Telangana farmers",
+      "publisher": "The South First",
+      "url": "https://thesouthfirst.com/news/elusive-loan-waiver-the-wait-is-agonising-for-several-telangana-farmers-even-in-cms-home-turf",
+      "date": "2024-08",
+      "tier": "major_news"
+    },
+    "sf-runamafi-guidelines": {
+      "title": "With ration card rider, Telangana government releases guidelines on Rs 2 lakh crop loan waiver",
+      "publisher": "The South First",
+      "url": "https://thesouthfirst.com/news/with-ration-card-rider-telangana-government-releases-guidelines-on-₹2-lakh-crop-loan-waiver",
+      "date": "2024-07-15",
+      "tier": "major_news"
+    },
+    "siasat-gruha-jyothi-launch": {
+      "title": "Gruha Jyothi: Telangana govt launches free power scheme",
+      "publisher": "Siasat",
+      "url": "https://www.siasat.com/gruha-jyothi-telangana-govt-launches-free-power-scheme-2983871/amp/",
+      "date": "2024-02-27",
+      "tier": "major_news"
+    },
+    "siasat-mahalakshmi-81pct": {
+      "title": "Telangana women saved Rs 10K crore from free bus travel: Govt",
+      "publisher": "Siasat (quoting TGSRTC VC & MD)",
+      "url": "https://www.siasat.com/telangana-women-save-rs-10k-crore-from-free-bus-travel-govt-3442863/amp/",
+      "date": "2026-03-29",
+      "tier": "major_news"
+    },
+    "siasat-ration-17lakh": {
+      "title": "Telangana adds 17 lakh new names to ration cards after 8 years",
+      "publisher": "Siasat",
+      "url": "https://www.siasat.com/telangana-adds-17-lakh-new-names-to-ration-cards-after-8-years-3220027/amp/",
+      "date": "2025-05-13",
+      "tier": "major_news"
+    },
+    "siasat-ration-jan2025": {
+      "title": "Harish Rao urges Telangana govt to increase income limit for ration card eligibility",
+      "publisher": "Siasat",
+      "url": "https://www.siasat.com/harish-rao-urges-telangana-govt-to-increase-income-limit-for-ration-card-eligibility-3167304/amp/",
+      "date": "2025-01-19",
+      "tier": "major_news"
+    },
+    "siasat-ryv-cibil": {
+      "title": "Telangana: CIBIL score mandatory for Rajiv Yuva Vikasam scheme",
+      "publisher": "Siasat",
+      "url": "https://www.siasat.com/telangana-cibil-score-mandatory-for-rajiv-yuva-vikasam-scheme-3216483/amp/",
+      "date": "2025",
+      "tier": "major_news"
+    },
+    "siasat-ryv-slabs": {
+      "title": "Telangana minority youth urged to apply for RYV scheme before April 5 deadline",
+      "publisher": "Siasat",
+      "url": "https://www.siasat.com/telangana-minority-youth-urged-to-apply-for-ryv-scheme-before-april-5-deadline-3200684/amp/",
+      "date": "2025-04",
+      "tier": "major_news"
+    },
+    "tnm-gj-start": {
+      "title": "Telangana starts implementing Gruha Jyothi scheme",
+      "publisher": "The News Minute",
+      "url": "https://www.thenewsminute.com/telangana/telangana-starts-implementing-gruha-jyothi-scheme",
+      "date": "2024-03-01",
+      "tier": "major_news"
+    },
+    "tt-bima-claims-oct2026": {
+      "title": "Rythu Bima claims pile up as government leaves farmers' families waiting",
+      "publisher": "Telangana Today",
+      "url": "https://telanganatoday.com/rythu-bima-claims-pile-up-as-government-leaves-farmers-families-waiting",
+      "date": "2026-10-04",
+      "tier": "major_news"
+    },
+    "tt-bima-premium-sep2026": {
+      "title": "Telangana farmers anxious as Congress govt fails to pay premium under Rythu Bima",
+      "publisher": "Telangana Today",
+      "url": "https://telanganatoday.com/telangana-farmers-anxious-as-congress-govt-fails-to-pay-premium-under-rythu-bima",
+      "date": "2026-09-04",
+      "tier": "major_news"
+    },
+    "tt-kl-12years": {
+      "title": "Kalyana Lakshmi, Shaadi Mubarak complete 12 years with 16.78 lakh beneficiaries",
+      "publisher": "Telangana Today",
+      "url": "https://telanganatoday.com/kalyana-lakshmi-shaadi-mubarak-complete-12-years-with-16-78-lakh-beneficiaries",
+      "date": "2026-10-01",
+      "tier": "major_news"
+    },
+    "uni-fine-rice-2025": {
+      "title": "Telangana to begin distributing new ration cards from July 14 (UNI)",
+      "publisher": "UNI India",
+      "url": "https://www.uniindia.com/news/south/politics-telangana-ration-cards/3505515.html",
+      "date": "2025-07-02",
+      "tier": "major_news"
+    },
+    "uni-ration-cards-aug2026": {
+      "title": "Telangana smart ration cards / food security card figures (UNI)",
+      "publisher": "UNI India",
+      "url": "https://test.uniindia.com/news/south/admin-telangana-smart-ration-cards/3939984.html",
+      "date": "2026-08",
+      "tier": "major_news"
+    },
+    "vikaspedia-free-bus": {
+      "title": "Free bus travel for women",
+      "publisher": "Vikaspedia",
+      "url": "https://en.vikaspedia.in/viewcontent/women/women-empowerment/free-bus-travel-for-women",
+      "tier": "secondary"
+    }
+  }
+}
