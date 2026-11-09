@@ -23,14 +23,13 @@ non-negotiable invariants that are easy to break accidentally.
 ## 1. Aim (6 Nov 2026 pivot)
 
 **Gnani** is a voice-first, source-grounded informational assistant for
-Telangana government welfare schemes. On 6 Nov the owner replaced the RAG
-pipeline with a **rule-based progressive interview**: the whole conversation is
-a walk through `data/telangana_schemes_all.json` (13 schemes / 55 sources) —
-scheme facts answered straight from the pack, and an eligibility check that
-fills **one key-pair per question turn** until an early fail (cited) or a full
-pass (citing every criterion). The only LLM work left is **one tiny parse call
-per turn** that maps the user's freeform Telugu utterance to an intent and
-answer slots. The LLM never decides eligibility and never composes prose.
+Telangana government welfare schemes. The turn pipeline uses one LLM call to
+understand the person's Telugu message and write a concise natural-language
+reply from the relevant scheme-pack context. Python remains authoritative for
+validating selected facts, citations, criteria, eligibility, and state
+transitions; eligibility still fills **one key-pair per question turn** until
+an early fail (cited) or a full pass (citing every criterion). The LLM never
+decides eligibility or invents scheme facts.
 
 The product is deliberately **NOT**: a chatbot with a microphone bolted on, an
 official government channel, a document drop, or a system that guesses. Where
@@ -40,20 +39,20 @@ and point at the official portal.
 ## 2. Non-negotiable rules (break these = project failure)
 
 1. **Never fabricate** scheme facts, amounts, dates, documents, procedures,
-   contacts or URLs — not in answers, not in parse replies, not in citations.
-   Everything shown or spoken comes from the JSON pack verbatim (with its
-   `source_ids`) or from honest fixed replies (`GREETING_TE`, `UNRELATED_TE`,
-   `NOT_IN_SOURCES_TE`, …).
+   contacts or URLs. The LLM may phrase concise replies in natural Telugu, but
+   scheme claims must be supported by the supplied JSON pack context and
+   citations must be attached by Python from its `source_ids`. Unsupported
+   questions get an honest abstention; Python keeps fixed safety fallbacks.
 2. **Pack confidence rules are enforced in replies:** facts with `medium`
    confidence carry `MEDIUM_NOTE_TE`, `low` facts carry `LOW_NOTE_TE`
    ("sources disagree — don't rely"), and any scheme whose `status` ∉ {active}
    gets `status_note` **before** benefits (`STATUSES_NEEDING_A_NOTE`).
 3. **Topics under `unknown_in_sources` get their honest notice once**, then the
    flow continues. They are never turned into criteria.
-4. **The parse contract is never loosened:** `_check_parse_shape` validates the
-   model's intent/scheme_id/answers/fact_ids against the pack's vocabulary;
-   invalid or unreachable ⇒ one bounded re-ask, then `_fallback_parse`
-   (deterministic keyword lexicon) keeps the turn alive honestly.
+4. **The model contract is never loosened:** `_check_parse_shape` validates
+   intent/scheme_id/answers/fact_ids and reply text; invalid output ⇒ one bounded
+   re-ask, then `_fallback_parse` (deterministic keyword lexicon) keeps the turn
+   alive honestly. Python rejects unknown facts and attaches citations itself.
 5. **The LLM never decides eligibility.** Evaluation is pure Python
    (`_first_failure`/`_first_pending`/`_apply_extracted_facts`), verdicts come
    from the pack's `criteria[].required` values, and the final decision is
@@ -97,19 +96,18 @@ and point at the official portal.
    │ POST /api/assistant/query     → engine.route_turn(...)             │
    └───────────────────────────────┬────────────────────────────────────┘
                                    ▼
-        backend/engine.py — the rule core (one tiny LLM call + pure Python)
-        1. _parse_turn   tiny strict-JSON call: utterance → intent +
-                         scheme_id + answers + fact_ids (`_chat_parse`,
-                         one bounded re-ask; reasoning-channel fallback)
-        2. _check_parse_shape  schema/vocabulary gate (never loosened);
-                         failure ⇒ _fallback_parse keyword lexicon
-        3. deterministic lanes: scheme info from facts/summary (+status
-                         prefix + confidence notes + offer), progressive
-                         interview (one question per turn), stop/switch,
-                         fixed conversation replies
+        backend/engine.py — one LLM call plus a trusted Python core
+        1. _parse_turn   strict JSON call: utterance + pack context → intent,
+                         slots, selected fact ids, concise reply text
+        2. _check_parse_shape  schema/vocabulary gate; one bounded re-ask,
+                         then _fallback_parse keyword lexicon
+        3. LLM writes grounded scheme wording; Python attaches citations and
+                         enforces status/confidence notes, privacy, offers,
+                         and progressive interview state
         4. evaluator: _first_failure (early fail, cited) →
-                         _first_pending (next unfilled key-pair) → pass
-                         reply citing every criterion + FINAL_DECISION_TE
+                         _first_pending (next applicable unfilled key-pair) → pass
+                         reply citing every applicable gate + FINAL_DECISION_TE;
+                         Hyderabad/CURE gates run only for matching applicants
         5. citations built straight from pack sources →
                          `_pack_citation` (id/title/issuer/published_date/
                          section/excerpt/source_url/scheme_id/tier)
@@ -129,31 +127,32 @@ and point at the official portal.
 - The pack is the single source of truth; `load_pack()` re-reads when the file
   changes on disk (no index build step any more) and `_sanitize_pack` drops
   malformed criteria/facts rather than ever inventing a rule.
-- Fixed honest Telugu reply blocks (greeting/about/unrelated/unknown/
-  not-in-sources/status/confidence notes) — no LLM prose composition anywhere.
+- LLM prose is concise and pack-grounded for scheme answers; Python keeps
+  fixed safety/unknown-source fallbacks and enforces all citations and decisions.
 - `stage_timings` (`parse_llm`, `parse_retry_llm`, `retry_wait`, `total`,
   `other`) rides on every `route_turn` result; the browser's timing chip shows
   `parse`/`parse↻`.
 
 ## 4. Conversation policy (implemented)
 
-| Intent (from the parse call) | Retrieval? | LLM? | Result |
+| Intent (from the model call) | Retrieval? | LLM? | Result |
 |---|---|---|---|
-| `greeting`/`about` | no | parse only | fixed honest lines, no citations |
-| `scheme_info` | no | parse only | deterministic facts answer (+confidence notes, how-to-apply, portal, **offer** of the check when criteria exist) |
+| `greeting`/`about` | no | parse + brief wording | conversational reply; Python preserves safety guardrails |
+| `scheme_info` | no | interpret + write from pack context | grounded answer with Python-attached citations, confidence/status notes, how-to-apply, portal, and optional check offer |
 | `start_check` | no | parse only | first criterion question `[C1]` |
 | `check_answer` | no | parse only | fills the pending key-pair → next question, or early fail (cited), or full pass (cited) |
 | `stop_check` | no | parse only | honest stop; check resets without sticking |
-| `switch_scheme` | no | parse only | new scheme info + fresh state (old facts wiped) |
-| `unrelated` | no | parse only | honest decline + privacy warning |
+| `switch_scheme` | no | interpret + write from pack context | new scheme info + fresh state (old facts wiped) |
+| `unrelated` | no | parse + brief wording | honest decline + privacy warning |
 
 **Progressive interview flow:** `offered → active → done`. While a check runs,
 ordinary conversation (greeting/about/unrelated) answers politely and lets the
 check wait (pending criterion untouched). Facts volunteered out of order are
 merged; the first failed criterion stops with a result citing that criterion's
-source; all criteria passing produces an "appears eligible" summary citing
-every criterion, with the final decision explicitly left to officials.
-Malformed or out-of-value-space values are re-asked, never judged.
+source; all applicable gates passing produces an "appears eligible" summary
+citing each gate, with the final decision explicitly left to officials. The
+Indiramma interview asks statewide gates and asks Hyderabad/CURE gates only when
+that area applies. Malformed or out-of-value-space values are re-asked, never judged.
 
 ## 5. File-by-file guide
 
@@ -169,7 +168,7 @@ Malformed or out-of-value-space values are re-asked, never judged.
 | File | What it is |
 |---|---|
 | `engine.py` | **The rule core** (see §3). Also loads `backend/.env`. |
-| `voice_server.py` | Stdlib `ThreadingHTTPServer` adapter on 127.0.0.1:8000. Serves frontend/index.html at `/`, `/config.js`, `/vendor/*` (path-safe, MIME-typed); `/health`; CORS via `WEB_ORIGINS` on every response plus `do_OPTIONS` preflight; `/api/voice/transcribe` (multipart, ≤10 MB, Prisma STT, `elapsed_ms`); `/api/voice/synthesize` + `/synthesize_stream` (Timbre TTS; `speech_text()` strips citation markers/URLs/markdown from spoken text only, one fixed Telugu "link is on screen" line when a URL was removed; `pcm_stream_lines` NDJSON framing with meta/b64/done lines); `/api/assistant/query` (validates payload, forwards to `engine.route_turn`, attaches `elapsed_ms`). Logs request type only — never bodies, transcripts, audio, or keys. Still uses deprecated `cgi` (fine on 3.11; replace when convenient). |
+| `voice_server.py` | Stdlib `ThreadingHTTPServer` adapter on 127.0.0.1:8000. Serves frontend/index.html at `/`, `/config.js`, `/vendor/*` (path-safe, MIME-typed); `/health`; CORS via `WEB_ORIGINS` on every response plus `do_OPTIONS` preflight; `/api/voice/transcribe` (multipart, ≤10 MB, Prisma STT, `elapsed_ms`); `/api/voice/synthesize` + `/synthesize_stream` (Timbre TTS; `speech_text()` strips citation markers/links/Markdown from spoken text without reading source details aloud; source URLs remain in citation cards; `pcm_stream_lines` NDJSON framing with meta/b64/done lines); `/api/assistant/query` (validates payload, forwards to `engine.route_turn`, attaches `elapsed_ms`). Logs request type only — never bodies, transcripts, audio, or keys. Still uses deprecated `cgi` (fine on 3.11; replace when convenient). |
 | `.env` | Local-only config: `GNANI_API_KEY`, `GNANI_LANGUAGE=te-IN`, `GNANI_TTS_MODEL=timbre-v2.5`, `GNANI_TTS_VOICE=Suhana`, `HOST/PORT`, `FEATHERLESS_BASE_URL/API_KEY/EMBEDDING_MODEL/LLM_MODEL` (the parse call model is `FEATHERLESS_LLM_MODEL`; `FEATHERLESS_MODEL`/`LLM_MODEL` accepted as aliases), self-hosted fallbacks (`SELF_HOSTED_*`/`LLM_*`/`EMBEDDING_*`), and `WEB_ORIGINS` (comma-separated origins allowed to call the API from the browser; add the Cloudflare Pages origin here). **Secrets: never commit, never log, never send to the client. Rotate the Featherless key (it leaked in the local git snapshot).** |
 
 ### frontend/
@@ -182,17 +181,17 @@ Malformed or out-of-value-space values are re-asked, never judged.
 ### data/
 | File | What it is |
 |---|---|
-| `telangana_schemes_all.json` | **The single source of truth** (13 schemes, 55 sources). Keys: `meta`, `schemes[{scheme_id, name_en, name_te, category, status, status_note, summary_en, summary_te, facts[{id, claim, confidence, source_ids}], criteria[{id, question_te, answer_type, required, source_id, basis, fail_message_te, confidence}], unknown_in_sources, how_to_apply, portal}]`, `sources{source_id → {title, publisher, url, date, tier}}`. Confidence rules live in `meta.confidence_levels`. Any change here needs no rebuild — `load_pack()` picks it up by mtime. |
+| `telangana_schemes_all.json` | **The single source of truth** (13 schemes, 55 sources). Keys: `meta`, `schemes[{scheme_id, name_en, name_te, category, status, status_note, summary_en, summary_te, facts[{id, claim, confidence, source_ids}], criteria[{id, question_te, answer_type, required, source_id, basis, fail_message_te, confidence, optional condition/gate}], unknown_in_sources, how_to_apply, portal}]`, `sources{source_id → {title, publisher, url, date, tier}}`. Confidence rules live in `meta.confidence_levels`. Any change here needs no rebuild — `load_pack()` picks it up by mtime. |
 | `telangana_schemes_all.md` | The owner's narrative source pack + confidence/tier rules (human reference; `re-check medium/low claims` warnings). |
 
 ### tests/ (active suite; LLM and TTS fully mocked)
 | File | What it covers |
 |---|---|
-| `test_engine.py` | The rule engine: fixed conversation replies with no citations and no LLM prose; scheme-info answers built from pack facts + citation integrity (source_url present, `[C1]` markers); uncoverable fact requests abstain instead of substituting; zero-criteria schemes never offer a check; status-note-before-benefits for non-active statuses; the full interview (accept → one criterion question per turn → facts merged, early fail stops with the criterion's own source, full pass cites every criterion + final decision left to officials, stop without sticking, cross-scheme wipe, `unknown_in_sources` noticed once); answer-slot safety (out-of-space parse values trigger the deterministic fallback and are never stored or judged; LLM-down lexicon fallback routes schemes and judges honest answers). |
+| `test_engine.py` | The rule engine: fixed conversation replies with no citations and no LLM prose; scheme-info answers built from pack facts + citation integrity (source_url present, `[C1]` markers); uncoverable fact requests abstain instead of substituting; zero-criteria schemes never offer a check; status-note-before-benefits for non-active statuses; the full interview (accept → one criterion question per turn → facts merged, early fail stops with the criterion's own source, full pass cites applicable gates + final decision left to officials, Hyderabad/CURE conditions are conditional, stop without sticking, cross-scheme wipe); application/document guidance and online/offline channel choice; answer-slot safety (out-of-space parse values trigger the deterministic fallback and are never stored or judged; LLM-down lexicon fallback routes schemes and judges honest answers). |
 | `test_voice_server.py` | `query_payload` forwarding contract (question/state/history/evidence as-is to `engine.route_turn`), invalid payloads rejected; `speech_text` tests (markers/URLs stripped, markdown labels kept, Telugu untouched, URL notice exactly once). |
 | `test_voice_stream.py` | `pcm_stream_lines` NDJSON framing (meta line, lazily-yielding b64 lines, `done` last). |
 
-Run: `py -m unittest discover -s tests` (40 cases, LLM/TTS fully mocked).
+Run: `py -m unittest discover -s tests` (48 cases, LLM/TTS fully mocked).
 `test_benchmark_stats.py` and the legacy suite moved to `_archive/` with the
 rest of the RAG era.
 
@@ -220,7 +219,7 @@ checks (`benchmark_stages.py`, `check_ttft.py`, `check_stream_*.py`,
 - Rule engine live-verified against Featherless: scheme match, offer, accept,
   first criterion question, answer applied and flow advanced (unknown notices
   shown once each).
-- 40 active tests green (fresh layout).
+- 48 active tests green (fresh layout).
 - CORS + static serving verified over HTTP (index, config.js, vendor,
   preflight, allowed/disallowed origins, two fallback turns).
 - Cloudflare Pages deploy path defined (`frontend/config.js` + `WEB_ORIGINS`);

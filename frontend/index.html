@@ -91,7 +91,8 @@
       padding: 2rem 1.25rem 3rem;
     }
     .landing-inner { width: min(30rem, 100%); text-align: center; }
-    .landing .orb-button { margin: 3.5rem auto 1.4rem; }
+    .landing-opening { max-width: 27rem; margin: 0 auto; font-size: 1.05rem; }
+    .landing .orb-button { margin: 2rem auto 1.4rem; }
     .mic-label { margin: 0; font-weight: 600; font-size: 1.05rem; }
     .status { min-height: 1.4rem; margin: .5rem 0 0; color: var(--muted); font-size: .86rem; }
     .status.is-error { color: var(--end); font-weight: 600; }
@@ -291,6 +292,7 @@
     <section class="landing" id="landing" aria-labelledby="landing-title">
       <div class="landing-inner">
         <h1 class="visually-hidden" id="landing-title">Talk to Gnani about Telangana schemes</h1>
+        <p class="landing-opening" id="landingOpening" lang="te">నమస్కారం! నేను జ్ఞాని. తెలంగాణ పథకాల సమాచారం లేదా అర్హత చెక్‌లో సహాయం చేస్తాను. ఏ పథకం గురించి తెలుసుకోవాలనుకుంటున్నారు?</p>
         <button class="orb-button" id="startMic" type="button" aria-label="Start talking">
           <span class="orb" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v4M8 22h8"></path></svg>
@@ -429,6 +431,8 @@
 
     // ---------------- Session state (transient; nothing is stored server-side) ----------------
     let conversationActive = false;
+    let openingAdded = false;
+    const OPENING_MESSAGE = 'నమస్కారం! నేను జ్ఞాని. తెలంగాణ పథకాల సమాచారం లేదా అర్హత చెక్‌లో సహాయం చేస్తాను. ఏ పథకం గురించి తెలుసుకోవాలనుకుంటున్నారు?';
     let serverState = {};       // bounded session state returned by the backend
     let history = [];           // recent role turns sent with each request
     let carriedEvidence = [];   // citations from the last evidence-backed answer, reused for follow-ups
@@ -651,6 +655,7 @@
       stopListening();
       stopAudio();
       conversationActive = false;
+      openingAdded = false;
       voiceSession = false;
       handsFree = true;
       serverState = {};
@@ -683,6 +688,12 @@
       els.screen.hidden = false;
       closeSources();
       closeMenu();
+      if (!openingAdded) {
+        appendMessage('assistant', OPENING_MESSAGE, { kind: 'conversation', speakable: true });
+        history.push({ role: 'assistant', text: OPENING_MESSAGE });
+        openingAdded = true;
+        renderSources([], 'conversation', '');
+      }
       setStatus('idle', 'Tap the orb to speak, or type below.');
       els.input.focus();
     }
@@ -709,9 +720,14 @@
       els.stopPill.hidden = true;
     }
 
+    function stripCitationMarkers(text) {
+      return String(text || '').replace(/(?:\[\s*(?:C\s*)?\d+\s*\]?|\bC\s*\d+\s*\])/gi, '')
+        .replace(/\s+/g, ' ').trim();
+    }
+
     async function synthesizeAudio(text) {
-      // Inline citation markers and stray markup are never spoken.
-      const spokenText = text.replace(/\[C\d+\]/g, '').replace(/\s+/g, ' ').trim();
+      // Citation markers are metadata for the screen, never spoken.
+      const spokenText = stripCitationMarkers(text);
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 60000);
       try {
@@ -771,7 +787,7 @@
         const response = await fetchWithTimeout(`${API_BASE}/api/voice/synthesize_stream`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text: text.replace(/\[C\d+\]/g, '').replace(/\s+/g, ' ').trim() }),
+          body: JSON.stringify({ text: stripCitationMarkers(text) }),
           signal: controller.signal,
         });
         if (!response.ok || !response.body) throw new Error('TTS stream unavailable');
@@ -1071,9 +1087,25 @@
 
     function toggleRecording() {
       if (vadListening) { stopListening(); return; }
-      if (!conversationActive) enterVoiceScreen();
+      const firstVoiceTurn = !conversationActive;
+      if (firstVoiceTurn) enterVoiceScreen();
       voiceSession = true;    // A mic gesture starts the voice session for this whole visit.
       startClock();
+      if (firstVoiceTurn) {
+        setBusyUi(true);
+        setStatus('speak', OPENING_MESSAGE);
+        speakAnswer(OPENING_MESSAGE).then(({ result }) => {
+          setBusyUi(false);
+          if (result === 'error') setStatus('error', 'I could not play the greeting, but you can speak or type your question.');
+          else setStatus('idle', 'Your turn — speak when you are ready.');
+          startListening();
+        }).catch(() => {
+          setBusyUi(false);
+          setStatus('idle', 'Your turn — speak when you are ready.');
+          startListening();
+        });
+        return;
+      }
       startListening();
     }
 
