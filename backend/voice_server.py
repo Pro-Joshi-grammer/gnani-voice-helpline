@@ -26,33 +26,25 @@ from gnani.tts import AudioConfig, GnaniTTSClient, GnaniTTSStreamClient
 
 import engine
 
-# ---- Speech cleaning: only the spoken audio is cleaned; screen text keeps citations/links.
-_CITATION_MARKER_RE = re.compile(r"\[(?:C\s*)?\d+\]", re.IGNORECASE)
+# ---- Speech cleaning: citation details stay in source cards, not spoken audio.
+_CITATION_MARKER_RE = re.compile(
+    r"(?:\[\s*(?:C\s*)?\d+\s*\]?|\bC\s*\d+\s*\])", re.IGNORECASE)
 _MD_LINK_URL_RE = re.compile(r"\[([^\]\[]{1,200})\]\(\s*(?:https?://\S+?|www\.\S+?)\s*\)")
 _MD_BARE_URL_RE = re.compile(r"\[\s*(?:https?://\S+?|www\.\S+?)\s*\]")
 _PLAIN_URL_RE = re.compile(r"(?:https?://|www\.)\S+", re.IGNORECASE)
 _MD_SYMBOLS_RE = re.compile(r"```|[*_#>`~]+")
-_URL_NOTICE_TE = "అధికారిక వెబ్‌సైటు లింక్ స్క్రీన్‌పై ఉంది."
 
 
 def speech_text(text: str) -> str:
-    """Strip citation markers, URLs and Markdown symbols from text before TTS.
-
-    Sentences and their punctuation are kept intact. When a URL was removed, one
-    fixed short Telugu line is appended so the user knows the official link is
-    visible on screen.
-    """
+    """Strip citation markers, links and Markdown noise before TTS."""
     if not text:
         return ""
     cleaned = str(text)
-    had_url = bool(_MD_LINK_URL_RE.search(cleaned) or _MD_BARE_URL_RE.search(cleaned) or _PLAIN_URL_RE.search(cleaned))
-    # Markdown link labels survive ([text](url) → text); the URL never does.
-    cleaned = _MD_LINK_URL_RE.sub(r"\1", cleaned)
+    # Link labels and URLs are omitted; sources remain available in the UI.
+    cleaned = _MD_LINK_URL_RE.sub("", cleaned)
     cleaned = _MD_BARE_URL_RE.sub("", cleaned)
     cleaned = _PLAIN_URL_RE.sub("", cleaned)
     cleaned = _CITATION_MARKER_RE.sub("", cleaned)
-    if had_url:
-        cleaned = f"{cleaned} {_URL_NOTICE_TE}"
     cleaned = _MD_SYMBOLS_RE.sub(" ", cleaned)
     cleaned = re.sub(r"\s+", " ", cleaned)
     # No orphan spaces before sentence punctuation after marker/URL removal.

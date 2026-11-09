@@ -19,21 +19,22 @@ RYTHU = "rythu_bharosa"
 PARSE_OK = {"intent": "unrelated", "scheme_id": "", "answers": {}, "fact_ids": []}
 
 
-def parsed(intent="", scheme_id="", answers=None, fact_ids=None):
-    return json_parse(intent, scheme_id, answers, fact_ids)
+def parsed(intent="", scheme_id="", answers=None, fact_ids=None, reply_text=""):
+    return json_parse(intent, scheme_id, answers, fact_ids, reply_text)
 
 
-def json_parse(intent, scheme_id, answers, fact_ids):
+def json_parse(intent, scheme_id, answers, fact_ids, reply_text=""):
     return {
         "intent": intent,
         "scheme_id": scheme_id,
         "answers": answers or {},
         "fact_ids": fact_ids or [],
+        "reply_text": reply_text,
     }
 
 
-def mock_parse(intent="", scheme_id="", answers=None, fact_ids=None):
-    return patch.object(engine, "_chat_parse", return_value=json_parse(intent, scheme_id, answers, fact_ids))
+def mock_parse(intent="", scheme_id="", answers=None, fact_ids=None, reply_text=""):
+    return patch.object(engine, "_chat_parse", return_value=json_parse(intent, scheme_id, answers, fact_ids, reply_text))
 
 
 def mock_parse_failing():
@@ -65,23 +66,32 @@ class RouteTurnBase(unittest.TestCase):
 
 
 class ConversationTurns(RouteTurnBase):
-    def test_greeting_gets_fixed_reply_without_citations_or_llm_prose(self):
-        result = self.turn("నమస్కారం", mock=mock_parse("greeting"))
+    def test_greeting_uses_llm_wording_without_citations(self):
+        reply = "నమస్కారం! ఏ పథకం గురించి తెలుసుకోవాలి?"
+        result = self.turn("నమస్కారం", mock=mock_parse("greeting", reply_text=reply))
         self.assertEqual(result["decision"], "answer")
         self.assertEqual(result["kind"], "conversation")
-        self.assertEqual(result["answer_text"], engine.GREETING_TE)
+        self.assertEqual(result["answer_text"], reply)
         self.assertEqual(result["citations"], [])
         self.assertEqual(result["state"]["eligibility_mode"], "off")
 
-    def test_about_describes_capabilities_honestly(self):
-        result = self.turn("నువ్వు ఎవరు?", mock=mock_parse("about"))
-        self.assertEqual(result["answer_text"], engine.ABOUT_TE)
+    def test_about_uses_llm_wording_and_keeps_privacy_guard(self):
+        result = self.turn("నువ్వు ఎవరు?", mock=mock_parse("about", reply_text="నేను పథకాల సమాచారం అందిస్తాను."))
+        self.assertTrue(result["answer_text"].startswith("నేను పథకాల సమాచారం అందిస్తాను."))
+        self.assertIn("ప్రభుత్వ కార్యాలయం కాదు", result["answer_text"])
+        self.assertIn("Aadhaar", result["answer_text"])
         self.assertEqual(result["citations"], [])
 
-    def test_unrelated_turn_abstains_and_never_invents(self):
-        result = self.turn("ఇంకో ఊరి బస్సు టైం చెప్పు", mock=mock_parse("unrelated"))
+    def test_missing_llm_reply_uses_fixed_fallback(self):
+        result = self.turn("నమస్కారం", mock=mock_parse("greeting"))
+        self.assertEqual(result["answer_text"], engine.GREETING_TE)
+
+    def test_unrelated_turn_uses_llm_wording_and_keeps_scope_guard(self):
+        result = self.turn("ఇంకో ఊరి బస్సు టైం చెప్పు",
+                           mock=mock_parse("unrelated", reply_text="క్షమించండి, దానిలో సహాయం చేయలేను."))
         self.assertEqual(result["decision"], "abstain")
-        self.assertEqual(result["answer_text"], engine.UNRELATED_TE)
+        self.assertIn("క్షమించండి", result["answer_text"])
+        self.assertIn(engine.UNRELATED_SCOPE_TE, result["answer_text"])
         self.assertEqual(result["citations"], [])
 
     def test_empty_question_asks_back(self):
@@ -92,8 +102,9 @@ class ConversationTurns(RouteTurnBase):
 
     def test_conversation_waits_politely_while_a_check_is_active(self):
         state = active_state(INDIRAMMA, "owns_house")
-        result = self.turn("నమస్కారం", state=state, mock=mock_parse("greeting"))
-        self.assertEqual(result["answer_text"], engine.GREETING_TE)
+        result = self.turn("నమస్కారం", state=state,
+                           mock=mock_parse("greeting", reply_text="నమస్కారం!"))
+        self.assertEqual(result["answer_text"], "నమస్కారం!")
         # The check must NOT be reset just because of a greeting.
         self.assertEqual(result["state"]["eligibility_mode"], "active")
         self.assertEqual(result["state"]["pending_criterion"], "owns_house")
@@ -109,6 +120,9 @@ class SchemeInfoTurns(RouteTurnBase):
         self.assertTrue(text, "answer must not be empty")
         self.assertIn("[C1]", text)
         self.assertIn(engine.OFFER_TE, text, "an offered check must be mentioned")
+        self.assertEqual(engine.OFFER_TE, "ఈ పథకానికి మీ అర్హతను కూడా చూసుకోవాలా?")
+        self.assertNotIn("ప్రచురిత ప్రమాణాలతో", text)
+        self.assertNotIn("ఒక్క ప్రశ్న ఒక్క ప్రశ్నగా", text)
         citation = result["citations"][0]
         self.assertEqual(citation["scheme_id"], INDIRAMMA)
         self.assertTrue(citation["source_url"].startswith("http"),
@@ -116,12 +130,107 @@ class SchemeInfoTurns(RouteTurnBase):
         self.assertEqual(result["state"]["eligibility_mode"], "offered")
         self.assertEqual(result["state"]["active_scheme_id"], INDIRAMMA)
 
+    def test_completed_check_does_not_offer_the_same_check_again(self):
+        state = {
+            "active_scheme_id": INDIRAMMA,
+            "eligibility_mode": "done",
+            "pending_criterion": "",
+            "criteria_facts": {"low_income": {"value": "no", "source": "user_stated"}},
+        }
+        with mock_parse("scheme_info", INDIRAMMA, fact_ids=["priority_groups"],
+                        reply_text="SC, ST వర్గాలకు ప్రాధాన్యత ఉంటుంది."):
+            result = engine.route_turn("SC ST వారికి ప్రాధాన్యత ఉందా?", state, None, [])
+        self.assertNotIn(engine.OFFER_TE, result["answer_text"])
+        self.assertEqual(result["state"]["eligibility_mode"], "done")
+
+    def test_application_guidance_asks_user_to_choose_online_or_offline(self):
+        with mock_parse("scheme_info", INDIRAMMA, fact_ids=["application_process"],
+                        reply_text="ఆన్‌లైన్, ఆఫ్‌లైన్ దరఖాస్తు విధానాలు ఇవి."):
+            result = engine.route_turn("దరఖాస్తు ఎలా చేయాలి?", None, None, [])
+        self.assertIn("మీరు ఆన్‌లైన్‌లో దరఖాస్తు చేయాలనుకుంటున్నారా, లేక ఆఫ్‌లైన్‌లోనా?",
+                      result["answer_text"])
+        self.assertTrue(result["citations"])
+
+    def test_application_guidance_skips_channel_choice_when_user_already_chose(self):
+        with mock_parse("scheme_info", INDIRAMMA, fact_ids=["application_process"],
+                        reply_text="ఆన్‌లైన్‌లో దరఖాస్తు చేయండి."):
+            result = engine.route_turn("ఆన్‌లైన్‌లో ఎలా దరఖాస్తు చేయాలి?", None, None, [])
+        self.assertNotIn("మీరు ఆన్‌లైన్‌లో దరఖాస్తు చేయాలనుకుంటున్నారా", result["answer_text"])
+
+    def test_document_question_uses_the_scheme_checklist_even_if_parser_misses_it(self):
+        cases = [
+            ("rythu_bharosa", "రైతు భరోసా", "required_documents", "పట్టాదారు పాస్‌బుక్"),
+            ("gruha_jyothi", "గృహ జ్యోతి", "required_documents", "విద్యుత్ బిల్లు"),
+            ("mahalakshmi_lpg_500", "మహాలక్ష్మి", "required_documents", "గ్యాస్ వినియోగదారు వివరాలు"),
+        ]
+        for scheme_id, prompt, fact_id, expected in cases:
+            with self.subTest(scheme=scheme_id), mock_parse("scheme_info", scheme_id, fact_ids=[]):
+                result = engine.route_turn(f"{prompt} పథకానికి ఏ డాక్యుమెంట్లు కావాలి?", None, None, [])
+            self.assertIn(expected, result["answer_text"])
+            self.assertTrue(result["citations"])
+            self.assertEqual(result["citations"][0]["id"], "user-provided-verified-info")
+            self.assertEqual(result["citations"][0]["source_url"], "")
+            self.assertNotIn("upload", result["answer_text"].lower())
+
+    def test_gruha_jyothi_info_covers_tenants_with_parenthetical_glosses(self):
+        with mock_parse("scheme_info", "gruha_jyothi", fact_ids=[]):
+            result = engine.route_turn("అద్దె ఇంట్లో ఉండేవారికి గృహ జ్యోతి వస్తుందా?", None, None, [])
+        self.assertIn("అద్దె ఇంట్లో ఉండేవారూ అర్హులు", result["answer_text"])
+        with mock_parse("scheme_info", "rythu_bharosa", fact_ids=[]):
+            bank = engine.route_turn("బ్యాంక్ సీడింగ్ అంటే ఏమిటి?", None, None, [])
+        self.assertIn("(బ్యాంకు ఖాతాను ఆధార్‌తో లింక్ చేయడం)", bank["answer_text"])
+
+    def test_completed_check_followed_by_application_steps_does_not_reoffer(self):
+        state = {"active_scheme_id": "gruha_jyothi", "eligibility_mode": "done"}
+        with mock_parse("scheme_info", "gruha_jyothi", fact_ids=[]):
+            result = engine.route_turn("దరఖాస్తు ఎలా చేయాలి?", state, None, [])
+        self.assertIn("ఆఫ్‌లైన్‌:", result["answer_text"])
+        self.assertIn("మీరు ఆన్‌లైన్‌లో దరఖాస్తు చేయాలనుకుంటున్నారా", result["answer_text"])
+        self.assertNotIn(engine.OFFER_TE, result["answer_text"])
+        self.assertTrue(result["citations"])
+
     def test_scheme_info_without_fact_ids_falls_back_to_best_facts(self):
         with mock_parse("scheme_info", INDIRAMMA, fact_ids=[]):
             result = engine.route_turn("ఇందిరమ్మ పథకం చెప్పు", None, None, [])
         self.assertEqual(result["decision"], "answer")
         self.assertTrue(result["answer_text"])
         self.assertTrue(result["citations"], "default facts must still cite sources")
+
+    def test_scheme_answer_uses_llm_wording_without_appended_english_or_links(self):
+        reply = "ఈ పథకం అర్హులైన కుటుంబాలకు ఇల్లు నిర్మించుకునే సహాయం అందిస్తుంది."
+        with mock_parse("scheme_info", INDIRAMMA, fact_ids=["amount"],
+                        reply_text=reply + " [మూలం](https://example.gov) https://example.gov [C9]"):
+            result = engine.route_turn("ఇందిరమ్మలో ఎంత సహాయం వస్తుంది?", None, None, [])
+        text = result["answer_text"]
+        self.assertTrue(text.startswith(reply))
+        self.assertIn("[C1]", text)
+        self.assertNotIn("[C9]", text)
+        self.assertNotIn("https://", text)
+        self.assertNotIn(engine.scheme_entry(engine.load_pack(), INDIRAMMA)["how_to_apply"], text)
+        self.assertEqual(result["citations"][0]["scheme_id"], INDIRAMMA)
+        self.assertTrue(result["citations"][0]["source_url"].startswith("http"))
+
+    def test_uncoverable_generated_answer_abstains_without_substituting_facts(self):
+        with mock_parse("scheme_info", INDIRAMMA, fact_ids=[], reply_text="మూలాల్లో ఈ విషయం లేదు."):
+            result = engine.route_turn("ఇందిరమ్మలో నాకు తెలియని విషయం?", None, None, [])
+        self.assertEqual(result["decision"], "abstain")
+        self.assertEqual(result["citations"], [])
+        self.assertEqual(result["answer_text"], engine.NOT_IN_SOURCES_TE)
+
+    def test_llm_prompt_is_telugu_first_grounded_and_does_not_solicit_personal_data(self):
+        with patch.object(engine, "_chat_parse", return_value=json_parse("greeting", "", [], [])) as call:
+            engine.route_turn("నమస్కారం", None, None, [])
+        prompt = call.call_args.args[0]
+        self.assertIn("Telugu-first", prompt)
+        self.assertIn("rural listener can understand", prompt)
+        self.assertIn("Pack context (the only source of scheme claims)", prompt)
+        self.assertIn("Do not ask for caste or income unless", prompt)
+        self.assertIn("answer the user's question directly", prompt)
+        self.assertIn("Do not introduce yourself by the name Gnani", prompt)
+        self.assertIn("generic preambles, filler", prompt)
+        self.assertIn("Never request Aadhaar, bank, or OTP details", prompt)
+        self.assertIn("never ask users to upload or share documents in chat", prompt)
+        self.assertIn("finish by asking whether they prefer online or offline", prompt)
 
     def test_uncoverable_fact_request_abstains_instead_of_substituting(self):
         with mock_parse("scheme_info", INDIRAMMA, fact_ids=["made_up_topic"]):
@@ -176,6 +285,34 @@ class EligibilityFlowTurns(RouteTurnBase):
         citation = result["citations"][0]
         self.assertEqual(citation["scheme_id"], INDIRAMMA)
 
+    def test_short_colloquial_negative_answer_advances_the_pending_check(self):
+        state = active_state(INDIRAMMA, "other_property", facts={
+            "owns_house": {"value": "no", "source": "user_stated"},
+            "telangana_family": {"value": "yes", "source": "user_stated"},
+            "low_income": {"value": "yes", "source": "user_stated"},
+        })
+        with mock_parse("unrelated", reply_text="సరేనండి, ఇంకేదైనా అడగండి."):
+            result = engine.route_turn("ఆహా ఏం లేదు", state, None, [])
+        self.assertEqual(result["decision"], "ask")
+        self.assertEqual(result["state"]["criteria_facts"]["other_property"]["value"], "no")
+        self.assertEqual(result["state"]["pending_criterion"], "prior_housing_benefit")
+
+    def test_criterion_clarification_explains_and_keeps_the_pending_question(self):
+        state = active_state(INDIRAMMA, "other_property", facts={
+            "owns_house": {"value": "no", "source": "user_stated"},
+            "telangana_family": {"value": "yes", "source": "user_stated"},
+            "low_income": {"value": "yes", "source": "user_stated"},
+        })
+        clarification = "అవును, వ్యవసాయ భూమి లేదా ప్లాట్ వంటి ఇతర స్థిరాస్తి ఉందా అని అడుగుతున్నాను."
+        with mock_parse("check_clarification", reply_text=clarification):
+            result = engine.route_turn("ఇది వ్యవసాయ భూమి లాంటిదా?", state, None, [])
+        self.assertEqual(result["decision"], "answer")
+        self.assertIn("వ్యవసాయ భూమి", result["answer_text"])
+        self.assertIn("[C1]", result["answer_text"])
+        self.assertEqual(result["state"]["pending_criterion"], "other_property")
+        self.assertEqual(result["state"]["eligibility_mode"], "active")
+        self.assertNotIn("other_property", result["state"]["criteria_facts"])
+
     def test_failed_criterion_stops_the_flow_with_its_own_source(self):
         with mock_parse("check_answer", "", answers={"owns_house": "yes"}):
             result = engine.route_turn("మా ఇంట్లో ఉంది అక్కడే", active_state(INDIRAMMA, "owns_house"), None, [])
@@ -183,27 +320,53 @@ class EligibilityFlowTurns(RouteTurnBase):
         entry = engine.scheme_entry(engine.load_pack(), INDIRAMMA)
         criterion = entry["criteria"][0]
         self.assertIn(criterion["fail_message_te"], result["answer_text"])
+        self.assertNotIn(criterion["basis"], result["answer_text"])
         self.assertEqual(len(result["citations"]), 1)
         self.assertEqual(result["citations"][0]["id"], criterion["source_id"])
         self.assertEqual(result["state"]["eligibility_mode"], "done")
 
-    def test_all_criteria_pass_cites_every_criterion_and_leaves_the_decision_to_officials(self):
-        state = active_state(INDIRAMMA, "telangana_family", facts={"owns_house": {"value": "no", "source": "user_stated"}})
-        with mock_parse("check_answer", "", answers={"telangana_family": "yes"}):
-            result = engine.route_turn("తెలంగాణలోనే ఉన్నా", state, None, [])
+    def test_all_base_criteria_pass_and_cure_questions_are_skipped_outside_cure(self):
+        facts = {
+            "owns_house": {"value": "no", "source": "user_stated"},
+            "telangana_family": {"value": "yes", "source": "user_stated"},
+            "low_income": {"value": "yes", "source": "user_stated"},
+            "other_property": {"value": "no", "source": "user_stated"},
+            "prior_housing_benefit": {"value": "no", "source": "user_stated"},
+        }
+        answers = {"cure_area": "no"}
+        state = active_state(INDIRAMMA, "cure_area", facts=facts)
+        with mock_parse("check_answer", "", answers=answers):
+            result = engine.route_turn("హైదరాబాద్ పరిధిలో కాదు", state, None, [])
         self.assertEqual(result["decision"], "answer")
-        text = result["answer_text"]
-        for marker in ("[C1]", "[C2]"):
-            self.assertIn(marker, text)
-        self.assertEqual(len(result["citations"]), 2)
-        self.assertIn(engine.FINAL_DECISION_TE, text)
+        for marker in ("[C1]", "[C2]", "[C3]", "[C4]", "[C5]"):
+            self.assertIn(marker, result["answer_text"])
+        self.assertNotIn("[C6]", result["answer_text"])
+        self.assertEqual(len(result["citations"]), 5)
+        self.assertIn(engine.FINAL_DECISION_TE, result["answer_text"])
+        self.assertIn("దరఖాస్తు చేసుకోవడానికి అర్హత ఉన్నట్లు కనిపిస్తోంది", result["answer_text"])
+        self.assertIn("దరఖాస్తు విధానం చెప్పనా", result["answer_text"])
+        self.assertIn("ఇంకేదైనా సహాయం కావాలా", result["answer_text"])
         self.assertEqual(result["state"]["eligibility_mode"], "done")
 
-    def test_stop_check_during_a_running_check_stops_without_sticking(self):
-        with mock_parse("stop_check"):
+    def test_cure_criteria_are_asked_only_after_cure_area_is_confirmed(self):
+        facts = {
+            "owns_house": {"value": "no", "source": "user_stated"},
+            "telangana_family": {"value": "yes", "source": "user_stated"},
+            "low_income": {"value": "yes", "source": "user_stated"},
+            "other_property": {"value": "no", "source": "user_stated"},
+            "prior_housing_benefit": {"value": "no", "source": "user_stated"},
+        }
+        state = active_state(INDIRAMMA, "cure_area", facts=facts)
+        with mock_parse("check_answer", "", answers={"cure_area": "yes"}):
+            result = engine.route_turn("అవును, హైదరాబాద్ CUREలోనే", state, None, [])
+        self.assertEqual(result["decision"], "ask")
+        self.assertEqual(result["state"]["pending_criterion"], "cure_residence_years")
+
+    def test_stop_check_uses_llm_wording_but_code_resets_the_check(self):
+        with mock_parse("stop_check", reply_text="సరే, తనిఖీ ఆపాను."):
             result = engine.route_turn("చాలు ఆపెయ్", active_state(INDIRAMMA, "owns_house"), None, [])
         self.assertEqual(result["decision"], "answer")
-        self.assertEqual(result["answer_text"], engine.CHECK_STOPPED_TE)
+        self.assertEqual(result["answer_text"], "సరే, తనిఖీ ఆపాను.")
         self.assertEqual(result["state"]["eligibility_mode"], "off")
         self.assertEqual(result["state"]["criteria_facts"], {})
         self.assertTrue(result["state"]["offer_declined"])

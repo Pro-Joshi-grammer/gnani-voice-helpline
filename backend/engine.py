@@ -242,12 +242,33 @@ def _sanitize_pack(data: dict[str, Any]) -> dict[str, Any]:
                     continue
             else:
                 continue
-            criteria.append({
+            gate = raw.get("gate", True)
+            if not isinstance(gate, bool):
+                continue
+            condition = None
+            raw_condition = raw.get("condition")
+            if raw_condition is not None:
+                if not isinstance(raw_condition, dict):
+                    continue
+                condition_id = str(raw_condition.get("id", "")).strip()
+                condition_value = str(raw_condition.get("value", "")).strip().lower()
+                parent = next((item for item in criteria if item["id"] == condition_id), None)
+                if parent is None:
+                    continue
+                parent_values = (YES_NO_VALUES if parent["answer_type"] == "yes_no" else
+                                 {str(item).strip().lower() for item in parent["required"]})
+                if condition_value not in parent_values:
+                    continue
+                condition = {"id": condition_id, "value": condition_value}
+            clean_criterion = {
                 "id": criterion_id[:60], "question_te": question[:300], "answer_type": answer_type,
                 "required": required_value, "source_id": source_id, "basis": basis[:600],
-                "fail_message_te": fail_message[:300],
-                "confidence": str(raw.get("confidence", "")).strip()[:20],
-            })
+                "fail_message_te": fail_message[:300], "confidence": str(raw.get("confidence", "")).strip()[:20],
+                "gate": gate,
+            }
+            if condition is not None:
+                clean_criterion["condition"] = condition
+            criteria.append(clean_criterion)
         facts: list[dict[str, Any]] = []
         for raw in list(entry.get("facts", []))[:12]:
             if not isinstance(raw, dict):
@@ -258,6 +279,7 @@ def _sanitize_pack(data: dict[str, Any]) -> dict[str, Any]:
                 continue
             facts.append({
                 "id": fact_id[:60], "claim": claim[:400],
+                "answer_te": str(raw.get("answer_te", "")).strip()[:1200],
                 "confidence": str(raw.get("confidence", "")).strip()[:20],
                 "source_ids": [str(item).strip()[:60] for item in raw.get("source_ids", [])[:4]
                                if str(item).strip()],
@@ -368,6 +390,8 @@ _NO_WORDS = [" no", "nope", "లేదు", "ఉండదు", "వద్దు"
 _GREETING_WORDS = ["namaste", "namaskaram", "hello", "hai", "నమస్కారం", "నమస్తే", "హాయ్", "హలో"]
 _ABOUT_WORDS = ["ఎవరు", "what can you do", "how do you work", "ఎలా పని", "who are you"]
 _STOP_WORDS = ["ఆపు", "చాలు", "stop", "ఆపేయి", "తనిఖీ వద్దు"]
+_CHECK_CLARIFICATION_WORDS = ["అంటే ఏంటి", "అంటే ఏమిటి", "అర్థం ఏమిటి", "ఏమిటి", "ఏంటి", "లాంటిదా",
+                               "what does", "what do you mean", "meaning of", "explain"]
 
 
 def _yes_no_fallback(question: str) -> str:
@@ -384,6 +408,10 @@ def _yes_no_fallback(question: str) -> str:
 def _word_hit(question: str, words: list[str]) -> bool:
     text = f" {question.lower()} "
     return any(word in text for word in words)
+
+
+def _looks_like_check_clarification(question: str) -> bool:
+    return _word_hit(question, _CHECK_CLARIFICATION_WORDS)
 
 
 # ---------------- session state (transient; lives only in the browser) ----------------
@@ -491,7 +519,7 @@ def _dedupe_citations(citations: list[dict[str, Any]]) -> list[dict[str, Any]]:
 # ---------------- the tiny turn parser (the only LLM call; judged by meaning) ----------------
 
 _PARSE_INTENTS = {"greeting", "about", "scheme_info", "start_check", "check_answer",
-                  "stop_check", "switch_scheme", "unrelated"}
+                  "check_clarification", "stop_check", "switch_scheme", "unrelated"}
 
 
 def _check_parse_shape(data: Any, pack: dict[str, Any], entry: dict[str, Any] | None) -> None:
@@ -504,8 +532,9 @@ def _check_parse_shape(data: Any, pack: dict[str, Any], entry: dict[str, Any] | 
     scheme_id = str(data.get("scheme_id", "") or "").strip()
     if scheme_id and scheme_entry(pack, scheme_id) is None:
         raise ValueError(f"Unknown scheme id {scheme_id!r}")
-    if entry is not None:
-        allowed_ids = {criterion["id"] for criterion in entry["criteria"]}
+    selected_entry = scheme_entry(pack, str(data.get("scheme_id", "") or "").strip()) or entry
+    if selected_entry is not None:
+        allowed_ids = {criterion["id"] for criterion in selected_entry["criteria"]}
         answers = data.get("answers", {})
         if not isinstance(answers, dict):
             raise ValueError("answers must be an object")
@@ -513,7 +542,7 @@ def _check_parse_shape(data: Any, pack: dict[str, Any], entry: dict[str, Any] | 
             key = str(criterion_id)
             if key not in allowed_ids:
                 raise ValueError(f"Criterion {key!r} does not belong to the current scheme")
-            criterion = next(criterion for criterion in entry["criteria"] if criterion["id"] == key)
+            criterion = next(criterion for criterion in selected_entry["criteria"] if criterion["id"] == key)
             if criterion["answer_type"] == "yes_no":
                 if str(value or "").strip().lower() not in YES_NO_VALUES:
                     raise ValueError(f"Value {value!r} outside the yes/no space")
@@ -522,6 +551,11 @@ def _check_parse_shape(data: Any, pack: dict[str, Any], entry: dict[str, Any] | 
     answers_present = isinstance(data.get("answers", {}), dict) and bool(data.get("answers", {}))
     if entry is None and answers_present:
         raise ValueError("answers require a running check")
+    fact_ids = data.get("fact_ids", [])
+    if not isinstance(fact_ids, list) or len(fact_ids) > 3 or any(not isinstance(item, str) for item in fact_ids):
+        raise ValueError("fact_ids must be a list of up to three ids")
+    if not isinstance(data.get("reply_text", ""), str):
+        raise ValueError("reply_text must be a string")
 
 
 def _parse_turn(question: str, clean_state: dict[str, Any], clean_history: list[dict[str, str]],
@@ -535,25 +569,42 @@ def _parse_turn(question: str, clean_state: dict[str, Any], clean_history: list[
     mode = clean_state.get("eligibility_mode", "off")
     if active is not None and mode in {"offered", "active", "done"}:
         criteria_lines = "\n".join(
-            f'- {criterion["id"]}: {criterion["question_te"]}' for criterion in active["criteria"])
+            f'- {criterion["id"]}: {criterion["question_te"]} '
+            f'(allowed: {"yes, no" if criterion["answer_type"] == "yes_no" else ", ".join(criterion["required"])})'
+            + (" (routing only; not an eligibility requirement)" if not criterion.get("gate", True) else "")
+            + (f' (only when {criterion["condition"]["id"]}={criterion["condition"]["value"]})'
+               if criterion.get("condition") else "")
+            for criterion in active["criteria"])
     else:
         criteria_lines = "(none — no check is running)"
     scheme_lines = "\n".join(
         f'- {scheme["scheme_id"]}: {scheme["name_en"]} / {scheme["name_te"]}' for scheme in pack["schemes"])
+    scheme_context = []
+    for scheme in pack["schemes"]:
+        facts = "; ".join(
+            f'{fact["id"]} ({fact["confidence"]}; sources {", ".join(fact["source_ids"])}): {fact["claim"]}'
+            for fact in scheme["facts"])
+        details = (f'{scheme["scheme_id"]} | {scheme["name_te"]} | status: {scheme["status"]} '
+                   f'{scheme["status_note"]} | summary: {scheme["summary_te"]} | facts: {facts} '
+                   f'| apply: {scheme["how_to_apply"]} | portal: {scheme["portal"]}')
+        scheme_context.append(details[:1800])
+    context_text = "\n".join(scheme_context)[:24000]
 
     system = (
-        "You map one user utterance of a Telugu-first Telangana welfare-scheme helpline onto an "
-        "intent and slots. Judge meaning only — informal Telugu, Telangana slang, coded or romanised "
-        "words, code-mixed Telugu-English, greetings and partial sentences are all in scope; never "
-        "rely on fixed expressions. Return JSON only with keys: intent, scheme_id, answers, fact_ids.\n"
+        "You are Gnani, a warm, respectful Telugu-first Telangana welfare-scheme voice assistant. "
+        "Understand informal or romanised Telugu and code-mixed speech. Do not introduce yourself by the name Gnani "
+        "unless the user explicitly asks your name. Return JSON only with keys: "
+        "intent, scheme_id, answers, fact_ids, reply_text.\n"
         "intent is exactly one of:\n"
         "- greeting: a greeting, thanks or conversational filler.\n"
         "- about: asks what this assistant is or can do.\n"
-        "- scheme_info: a question about a named scheme's facts — what it gives, launch date, who is "
-        "covered, how to apply, documents, status.\n"
+        "- scheme_info: asks about or seeks a recommendation for a scheme — benefits, who is covered, "
+        "application steps, documents, status, or a scheme fitting the user's stated need.\n"
         "- start_check: agrees to the offered eligibility check, or asks for a check by name.\n"
         "- check_answer: answers the pending eligibility question or states facts about the user's "
         "own situation relevant to the running check.\n"
+        "- check_clarification: asks what the pending eligibility question means or asks for an example; "
+        "briefly explain it in simple Telugu without answering for the user.\n"
         "- stop_check: wants a running or offered check stopped.\n"
         "- switch_scheme: clearly moves to a different scheme.\n"
         "- unrelated: anything else (other government services, personal tasks, opinions).\n"
@@ -562,10 +613,31 @@ def _parse_turn(question: str, clean_state: dict[str, Any], clean_history: list[
         "check's allowed ids and allowed values below. One answer per mention, mapped from the user's "
         "own words to the value the criterion expects (yes_no → \"yes\" or \"no\"; list → one listed "
         "value). Never invent an id or a value.\n"
-        "fact_ids: only for scheme_info — up to 3 fact ids of the named scheme whose topics match the "
-        "question (launch, amount, coverage, documents, portal...). Else [].\n"
-        "You never state scheme facts yourself; you only route and fill slots.\n"
+        "fact_ids: for scheme_info, select up to 3 exact fact ids from the selected scheme that support "
+        "your response; else []. Never cite facts from another scheme.\n"
+        "reply_text: for scheme_info, answer the user's question directly in one concise (ideally 1-3 short "
+        "sentences), natural Telugu-first answer in everyday, simple language a rural listener can understand; "
+        "avoid jargon, ambiguity, generic preambles, filler, and restating the question (for example, do not say "
+        "'Sure, I will tell you about this scheme'). When using a technical term, add its short common meaning "
+        "in parentheses the first time (e.g. bank seeding (linking the bank account with Aadhaar), DBT "
+        "(government aid deposited directly into the bank account), IFSC (bank branch code), CSC "
+        "(authorized public-service center)). Use ONLY the selected scheme's supplied summary, facts, status, "
+        "and application guidance. Do not include "
+        "URLs, citation markers, source names, or explain where the information came from; citations appear "
+        "separately on screen. Do not infer eligibility, invent missing details, or claim an official decision. If the pack "
+        "does not answer the question, say so honestly. For check_clarification, explain only the pending "
+        "criterion in brief, simple Telugu; do not judge or answer it for the user. For other intents, write a brief "
+        "Telugu-first reply (max 240 characters) only for greeting/about/unrelated/stop_check; otherwise empty. Do not ask for "
+        "caste or income unless the user asks for personalized guidance or a supplied criterion requires it. "
+        "Never request Aadhaar, bank, or OTP details, and never ask users to upload or share documents in chat. "
+        "A document checklist is preparation guidance only; tell users to submit documents only through the official channel.\n"
+        "For application questions, use only the supplied application guidance. If both online and offline paths "
+        "are supplied and the user has not chosen one, finish by asking whether they prefer online or offline; "
+        "if they have chosen, explain only that path.\n"
+        "For scheme_info, a scheme_id may be chosen from the ids below based on the user's need, but only "
+        "recommend it as a possible match when pack facts support that match; do not claim the user is eligible.\n"
         f"\nScheme ids:\n{scheme_lines}\n"
+        f"Pack context (the only source of scheme claims):\n{context_text}\n"
         f"Running-check criteria ({active['scheme_id'] if active else 'none'}):\n{criteria_lines}"
     )
     if active is not None:
@@ -586,6 +658,8 @@ def _parse_turn(question: str, clean_state: dict[str, Any], clean_history: list[
                 "answers": parsed.get("answers", {}) if isinstance(parsed.get("answers", {}), dict) else {},
                 "fact_ids": [str(item).strip() for item in parsed.get("fact_ids", [])[:3]
                              if isinstance(item, str) and str(item).strip()] if isinstance(parsed.get("fact_ids"), list) else [],
+                "reply_text": parsed.get("reply_text", "").strip()[:1200]
+                if isinstance(parsed.get("reply_text"), str) else "",
             }
         except (ValueError, TypeError, KeyError) as error:
             last_error = error
@@ -604,6 +678,9 @@ def _fallback_parse(question: str, clean_state: dict[str, Any], pack: dict[str, 
         return {"intent": "about", "scheme_id": "", "answers": {}, "fact_ids": []}
     if _word_hit(question, _STOP_WORDS):
         return {"intent": "stop_check", "scheme_id": "", "answers": {}, "fact_ids": []}
+    if (clean_state.get("eligibility_mode") == "active" and clean_state.get("pending_criterion")
+            and _looks_like_check_clarification(question)):
+        return {"intent": "check_clarification", "scheme_id": "", "answers": {}, "fact_ids": []}
     value = _yes_no_fallback(question)
     if value and clean_state.get("eligibility_mode") == "active" and clean_state.get("pending_criterion"):
         return {"intent": "check_answer", "scheme_id": "",
@@ -618,16 +695,19 @@ def _fallback_parse(question: str, clean_state: dict[str, Any], pack: dict[str, 
 
 # ---------------- deterministic replies (all text comes straight from the pack) ----------------
 
-OFFER_TE = ("ఈ పథకం అవసరాలు మీకు సరిపోతాయేమో తేల్చడానికి, ఒక్క ప్రశ్న ఒక్క ప్రశ్నగా అడిగి చూడాలా? (సరే / కాదు అని చెప్పండి.)")
+OFFER_TE = "ఈ పథకానికి మీ అర్హతను కూడా చూసుకోవాలా?"
 CHECK_STOPPED_TE = "సరే అన్నా, తనిఖీ ఇక్కడ ఆపేస్తాను. తర్వాత కావాలంటే చెప్పండి."
 GREETING_TE = "నమస్కారం! తెలంగాణ ప్రభుత్వ పథకాల గురించి చెప్పగలను. ఏ పథకం గురించి ఒరిగెద్ది — పేరు చెప్పండి."
-ABOUT_TE = ("నేను తెలంగాణ ప్రభుత్వ పథకాల సమాచారాన్ని ప్రచురించిన మూలాల ఆధారంగా మాత్రమే చెబుతాను; ప్రతి వాక్యం వెనుక మూలాన్ని చూపుతాను. "
-            "నేను ప్రభుత్వ కార్యాలయం కాదు, డాక్యుమెంట్లు స్వీకరించలేను; తుది నిర్ణయం ఎల్లప్పుడూ అధికారులదే. "
+ABOUT_TE = ("తెలంగాణ ప్రభుత్వ పథకాల సమాచారాన్ని ప్రచురించిన మూలాల ఆధారంగా చెబుతాను; సమాధానాల్లో మూలాలను చూపుతాను. "
+            "ఇది ప్రభుత్వ కార్యాలయం కాదు, డాక్యుమెంట్లు స్వీకరించదు; తుది నిర్ణయం ఎల్లప్పుడూ అధికారులదే. "
             "Aadhaar, బ్యాంక్ ఖాతా లేదా OTP వంటి వివరాలు దయచేసి ఇక్కడ చెప్పవద్దు.")
-UNRELATED_TE = ("అది నా సహాయం చేసే విషయం కాదు అన్నా — నేను తెలంగాణ ప్రభుత్వ పథకాల సమాచారం మాత్రమే చెబుతాను.")
+ABOUT_GUARD_TE = ("ప్రచురించిన మూలాల సమాచారమే అందిస్తాను; నేను ప్రభుత్వ కార్యాలయం కాదు, డాక్యుమెంట్లు స్వీకరించను, "
+                  "తుది నిర్ణయం అధికారులదే. Aadhaar, బ్యాంక్ లేదా OTP వివరాలు చెప్పవద్దు.")
+UNRELATED_TE = "అది నా సహాయం చేసే విషయం కాదు అన్నా — నేను తెలంగాణ ప్రభుత్వ పథకాల సమాచారం మాత్రమే చెబుతాను."
+UNRELATED_SCOPE_TE = "నేను తెలంగాణ ప్రభుత్వ పథకాల సమాచారంలో మాత్రమే సహాయం చేయగలను."
 UNKNOWN_SCHEME_TE = ("ఏ పథకం గురించి అడుగుతున్నారో నాకు ఖచ్చితంగా అర్థం కాలేదు. పథకం పేరు చెప్పండి — "
                      "అందుబాటులో ఉన్న పథకాల జాబితా తెరపై ఉంది.")
-NOT_IN_SOURCES_TE = "ప్రచురించిన మూలాల్లో ఆ విషయం లేదు అన్నా; సోదేది అధికారిక కార్యాలయం దగ్గర మాత్రమే."
+NOT_IN_SOURCES_TE = "ఈ వివరంపై నా మూలాల్లో సమాచారం లేదు. దయచేసి సంబంధిత అధికారిక కార్యాలయంలో ధృవీకరించండి."
 MEDIUM_NOTE_TE = "ఈ సమాచారం ఒకే నివేదికలో మాత్రమే — అధికారికంగా తనిఖీ చేసి నమ్మదగింది."
 LOW_NOTE_TE = "మూలాలు విభేదిస్తున్నట్లున్నాయి, కాబట్టి దీన్ని సమాచారంగా మేట్టవద్దు."
 FINAL_DECISION_TE = "తుది నిర్ణయం సంబంధిత అధికారులదే అవుతుంది."
@@ -652,49 +732,89 @@ def _confidence_note(fact: dict[str, Any]) -> str:
 
 
 def _scheme_info_answer(pack: dict[str, Any], entry: dict[str, Any], fact_ids: list[str],
-                        with_offer: bool, clean_state: dict[str, Any]) -> dict[str, Any]:
-    """Deterministic answer from the pack: selected facts (or the default pair),
-    or the Telugu summary; how-to-apply and portal appended. No LLM prose."""
+                        with_offer: bool, clean_state: dict[str, Any], reply_text: str = "",
+                        ask_application_mode: bool = False) -> dict[str, Any]:
+    """Use model wording only alongside validated pack facts; Python owns citations and safeguards."""
     by_id = {fact["id"]: fact for fact in entry["facts"]}
     selected = [by_id[fact_id] for fact_id in fact_ids if fact_id in by_id]
     prefix = _status_prefix(entry)
-    if fact_ids and by_id and not selected:
+    if fact_ids and (not selected or any(fact_id not in by_id for fact_id in fact_ids)):
         # Invalid selection: answer honestly, never with substitute facts.
         answer_text = f"{prefix}{NOT_IN_SOURCES_TE}"
         return {"decision": "abstain", "kind": "scheme", "answer_text": answer_text[:4000],
+                "citations": [], "next_steps": [], "state": _clean_state(clean_state)}
+    if reply_text and not selected and fact_ids == []:
+        return {"decision": "abstain", "kind": "scheme", "answer_text": f"{prefix}{NOT_IN_SOURCES_TE}",
                 "citations": [], "next_steps": [], "state": _clean_state(clean_state)}
     if not selected:
         ranked = sorted(entry["facts"], key=lambda fact: 0 if fact.get("confidence") == "high" else 1)
         selected = ranked[:2]
     citations, markers = _facts_evidence(pack, entry, selected)
     if selected:
-        lines = [_status_prefix(entry)]
-        for fact in selected:
-            line = f"{fact['claim']}{_confidence_note(fact)} {markers.get(fact['id'], '')}".strip()
-            lines.append(line)
-        answer_text = " ".join(part for part in lines if part).strip()
+        if reply_text:
+            reply_text = re.sub(r"\[[^\]]*\]\((?:https?://|www\.)[^)]*\)", "", reply_text)
+            reply_text = re.sub(r"(?:https?://|www\.)\S+", "", reply_text, flags=re.IGNORECASE)
+            reply_text = re.sub(r"\[(?:C\s*)?\d+\]", "", reply_text, flags=re.IGNORECASE)
+            reply_text = re.sub(r"\s+", " ", reply_text).strip() or entry["summary_te"]
+            citation_markers = " ".join(dict.fromkeys(
+                marker for fact in selected for marker in markers.get(fact["id"], "").split()))
+            confidence_notes = " ".join(dict.fromkeys(
+                _confidence_note(fact).strip(" ()") for fact in selected if _confidence_note(fact)))
+            answer_text = " ".join(part for part in (
+                _status_prefix(entry), reply_text, citation_markers, confidence_notes) if part).strip()
+        else:
+            citation_markers = " ".join(dict.fromkeys(
+                marker for fact in selected for marker in markers.get(fact["id"], "").split()))
+            confidence_notes = " ".join(dict.fromkeys(
+                _confidence_note(fact).strip(" ()") for fact in selected if _confidence_note(fact)))
+            answer_body = " ".join(fact["answer_te"] for fact in selected if fact.get("answer_te"))
+            answer_text = " ".join(part for part in (
+                _status_prefix(entry), answer_body or entry["summary_te"], citation_markers, confidence_notes) if part).strip()
         decision = "answer"
     else:
         answer_text = f"{prefix}{entry['summary_te']}".strip()
         decision = "answer"
-    apply_text = entry.get("how_to_apply", "").strip()
-    if apply_text:
-        answer_text += f" దరఖాస్తు: {apply_text}"
-    portal_match = re.match(r"https?://\S+", entry.get("portal", ""))
-    if portal_match:
-        answer_text += f" అధికారిక వెబ్‌సైటు: {portal_match.group(0).rstrip(').,')}"
+    already_asked_channel = ("ఆన్‌లైన్" in answer_text and "ఆఫ్‌లైన్" in answer_text
+                             and ("?" in answer_text or "చేయాలనుకుంటున్నారా" in answer_text))
+    if ask_application_mode and not already_asked_channel:
+        answer_text += " మీరు ఆన్‌లైన్‌లో దరఖాస్తు చేయాలనుకుంటున్నారా, లేక ఆఫ్‌లైన్‌లోనా?"
     state = {**clean_state, "active_scheme_id": entry["scheme_id"], "last_question": ""}
     next_steps = []
     if with_offer and entry["criteria"]:
         answer_text += " " + OFFER_TE
         state["eligibility_mode"] = "offered"
         state["offer_declined"] = False
-        next_steps.append("మొదలుపెట్టాలంటే 'సరే' అని చెప్పండి; కావాలంటే 'కాదు'.")
+        next_steps.append("అవును అంటే మొదలుపెడతాను.")
     return {
         "decision": decision, "kind": "scheme", "answer_text": answer_text[:4000],
         "citations": _dedupe_citations(citations), "next_steps": next_steps[:2],
         "state": _clean_state(state),
         "evidence": [],
+    }
+
+
+_CRITERION_CLARIFICATIONS_TE = {
+    "owns_house": "మీ కుటుంబంలో ఎవరి పేరుపైనా భారతదేశంలో ఎక్కడైనా శాశ్వత ఇల్లు ఉందా అని అడుగుతున్నాను.",
+    "telangana_family": "మీ కుటుంబం శాశ్వతంగా తెలంగాణలోనే నివసిస్తుందా అని అడుగుతున్నాను.",
+    "low_income": "మీ కుటుంబం తక్కువ ఆదాయం లేదా EWS వర్గానికి చెందుతుందా అని అడుగుతున్నాను; ఆదాయం మొత్తం చెప్పాల్సిన అవసరం లేదు.",
+    "other_property": "ఇల్లు కట్టుకునే స్థలం కాకుండా మీ కుటుంబానికి వ్యవసాయ భూమి, మరో ప్లాట్ లేదా ఇంకో ఇల్లు వంటి స్థిరాస్తి ఉందా అని అడుగుతున్నాను.",
+    "prior_housing_benefit": "మరో ప్రభుత్వ గృహ పథకం ద్వారా మీ కుటుంబం ఇంతకుముందు ఇల్లు లేదా సహాయం పొందిందా అని అడుగుతున్నాను.",
+    "cure_area": "మీరు హైదరాబాద్ CURE/ORR పరిధిలోని ప్రాంతంలో నివసిస్తున్నారా అని అడుగుతున్నాను.",
+    "cure_residence_years": "CURE/ORR పరిధిలో మీ నివాసం కనీసం 10 సంవత్సరాలుగా ఉందా అని అడుగుతున్నాను.",
+    "cure_income": "మీ కుటుంబ వార్షిక ఆదాయం ₹6 లక్షల లోపేనా అని అడుగుతున్నాను; ఆదాయం మొత్తం చెప్పాల్సిన అవసరం లేదు.",
+    "cure_property": "ORR/CURE పరిధిలో మీ కుటుంబానికి ఇల్లు లేదా ఇతర స్థిరాస్తి ఉందా అని అడుగుతున్నాను.",
+}
+
+
+def _clarify_criterion(pack: dict[str, Any], entry: dict[str, Any], clean_state: dict[str, Any],
+                       criterion: dict[str, Any], question: str) -> dict[str, Any]:
+    explanation = _CRITERION_CLARIFICATIONS_TE.get(
+        criterion["id"], "ఈ ప్రశ్నలో మీ కుటుంబ పరిస్థితి గురించి అడుగుతున్నాను.")
+    return {
+        "decision": "answer", "kind": "scheme",
+        "answer_text": f"{explanation} {criterion['question_te']} [C1]"[:2000],
+        "citations": _criteria_evidence(pack, entry, [criterion]), "next_steps": [],
+        "state": _clean_state({**clean_state, "last_question": question}), "evidence": [],
     }
 
 
@@ -715,19 +835,13 @@ def _ask_criterion(pack: dict[str, Any], entry: dict[str, Any], clean_state: dic
 
 
 def _pass_reply(pack: dict[str, Any], entry: dict[str, Any], clean_state: dict[str, Any]) -> dict[str, Any]:
-    citations = _criteria_evidence(pack, entry, entry["criteria"])
-    parts = []
-    for index, criterion in enumerate(entry["criteria"], 1):
-        parts.append(f"{criterion['question_te']} → [C{index}]")
-    apply_text = entry.get("how_to_apply", "").strip()
-    answer_text = ("మీరు చెప్పిన వివరాల ప్రకారం, ప్రచురించిన ప్రతి అవసరానికి మీరు సరిపోతున్నారు: "
-                   + " · ".join(parts)
-                   + f" కాబట్టి ఈ పథకానికి అర్హులు కావచ్చు. {FINAL_DECISION_TE}")
-    if apply_text:
-        answer_text += f" దరఖాస్తు: {apply_text}"
-    portal_match = re.match(r"https?://\S+", entry.get("portal", ""))
-    if portal_match:
-        answer_text += f" అధికారిక వెబ్‌సైటు: {portal_match.group(0).rstrip(').,')}"
+    facts = clean_state.get("criteria_facts", {})
+    criteria = [criterion for criterion in entry["criteria"]
+                if criterion.get("gate", True) and _criterion_applies(criterion, facts)]
+    citations = _criteria_evidence(pack, entry, criteria)
+    markers = " ".join(f"[C{index}]" for index in range(1, len(criteria) + 1))
+    answer_text = ("మీరు చెప్పిన వివరాల ప్రకారం, ఈ పథకానికి దరఖాస్తు చేసుకోవడానికి అర్హత ఉన్నట్లు కనిపిస్తోంది. "
+                   f"{markers} {FINAL_DECISION_TE} దరఖాస్తు విధానం చెప్పనా, లేక ఇంకేదైనా సహాయం కావాలా?")
     return {
         "decision": "answer", "kind": "scheme", "answer_text": answer_text[:4000],
         "citations": citations, "next_steps": [],
@@ -740,8 +854,7 @@ def _fail_reply(pack: dict[str, Any], entry: dict[str, Any], clean_state: dict[s
                 criterion: dict[str, Any]) -> dict[str, Any]:
     citation = _pack_citation(pack, criterion["source_id"], criterion["basis"],
                               entry["scheme_id"], "criteria")
-    answer_text = (f"{_status_prefix(entry)}{criterion['fail_message_te']} [C1] "
-                   f"(నియమం: {criterion['basis']})")
+    answer_text = f"{_status_prefix(entry)}{criterion['fail_message_te']} [C1]"
     return {
         "decision": "answer", "kind": "scheme", "answer_text": answer_text[:4000],
         "citations": [citation], "next_steps": [],
@@ -750,10 +863,23 @@ def _fail_reply(pack: dict[str, Any], entry: dict[str, Any], clean_state: dict[s
     }
 
 
-def _decline_check(clean_state: dict[str, Any]) -> dict[str, Any]:
+def _conversation_text(parse: dict[str, Any], intent: str) -> str:
+    fallback = {"greeting": GREETING_TE, "about": ABOUT_TE, "unrelated": UNRELATED_TE,
+                "stop_check": CHECK_STOPPED_TE}.get(intent, "")
+    text = parse.get("reply_text", "").strip()[:240]
+    if not text:
+        return fallback
+    if intent == "about":
+        return f"{text} {ABOUT_GUARD_TE}"
+    if intent == "unrelated":
+        return f"{text} {UNRELATED_SCOPE_TE}"
+    return text
+
+
+def _decline_check(clean_state: dict[str, Any], reply_text: str = "") -> dict[str, Any]:
     state = {**clean_state, "eligibility_mode": "off", "offer_declined": True, "pending_criterion": ""}
     return {
-        "decision": "answer", "kind": "conversation", "answer_text": CHECK_STOPPED_TE,
+        "decision": "answer", "kind": "conversation", "answer_text": reply_text or CHECK_STOPPED_TE,
         "citations": [], "next_steps": [], "state": _clean_state(state), "evidence": [],
     }
 
@@ -789,6 +915,15 @@ def _criterion_allowed(criterion: dict[str, Any], value: Any) -> bool:
     return text in {str(item).strip().lower() for item in allowed}
 
 
+def _criterion_applies(criterion: dict[str, Any], facts: dict[str, Any]) -> bool:
+    condition = criterion.get("condition")
+    if not condition:
+        return True
+    entry = facts.get(condition["id"])
+    value = entry.get("value") if isinstance(entry, dict) else entry
+    return isinstance(value, str) and value.strip().lower() == condition["value"]
+
+
 def _criterion_failed(criterion: dict[str, Any], value: Any) -> bool:
     text = str(value).strip().lower()
     if criterion["answer_type"] == "yes_no":
@@ -798,6 +933,8 @@ def _criterion_failed(criterion: dict[str, Any], value: Any) -> bool:
 
 def _first_failure(criteria: list[dict[str, Any]], facts: dict[str, Any]) -> dict[str, Any] | None:
     for criterion in criteria:
+        if not criterion.get("gate", True) or not _criterion_applies(criterion, facts):
+            continue
         entry = facts.get(criterion["id"])
         if not entry:
             continue
@@ -822,7 +959,8 @@ def _first_pending(criteria: list[dict[str, Any]], facts: dict[str, Any]) -> dic
             return False
         value = entry.get("value") if isinstance(entry, dict) else entry
         return _criterion_allowed(criterion, value)
-    return next((criterion for criterion in criteria if not _known(criterion)), None)
+    return next((criterion for criterion in criteria
+                 if _criterion_applies(criterion, facts) and not _known(criterion)), None)
 
 
 def _apply_extracted_facts(facts: dict[str, Any], extracted: Any,
@@ -843,6 +981,46 @@ def _apply_extracted_facts(facts: dict[str, Any], extracted: Any,
 
 # ---------------- the turn pipeline ----------------
 
+def _facts_for_question(question: str, entry: dict[str, Any], fact_ids: list[str],
+                        reply_text: str) -> tuple[list[str], str]:
+    """Choose dedicated pack facts for document, eligibility, and apply questions."""
+    text = question.lower()
+    available = {fact["id"] for fact in entry["facts"]}
+    selected = ""
+    if any(word in text for word in ("document", "documents", "డాక్యుమెంట్", "పత్ర", "ఏవి తీసుకెళ్ల")):
+        selected = "required_documents"
+    elif any(word in text for word in ("eligible", "eligibility", "అర్హత", "ఎవరు అర్హులు",
+                                        "అద్దె", "tenant", "rented", "సీడింగ్", "అనుసంధానం")):
+        selected = "eligibility_details"
+    elif any(word in text for word in ("apply", "application", "దరఖాస్తు", "అప్లై")):
+        online = "online" in text or "ఆన్‌లైన్" in text
+        offline = "offline" in text or "ఆఫ్‌లైన్" in text
+        if online and not offline and "application_online" in available:
+            selected = "application_online"
+        elif offline and not online and "application_offline" in available:
+            selected = "application_offline"
+        else:
+            paths = [item for item in ("application_offline", "application_online") if item in available]
+            if paths:
+                return paths, ""
+            selected = "application_process"
+    if selected in available:
+        return [selected], ""
+    return fact_ids, reply_text
+
+
+def _needs_application_choice(question: str, fact_ids: list[str]) -> bool:
+    if not any(fact_id in {"application_process", "application_online", "application_offline"}
+               for fact_id in fact_ids):
+        return False
+    text = question.lower()
+    online = "online" in text or "ఆన్‌లైన్" in text
+    offline = "offline" in text or "ఆఫ్‌లైన్" in text
+    return online == offline and (
+        "application_process" in fact_ids or
+        ("application_offline" in fact_ids and "application_online" in fact_ids))
+
+
 @_profile_turn
 def route_turn(question: str, state: Any = None, history: Any = None, evidence: Any = None) -> dict[str, Any]:
     """One turn: interpret (tiny LLM, deterministic fallback) → pure-Python flow."""
@@ -862,6 +1040,18 @@ def route_turn(question: str, state: Any = None, history: Any = None, evidence: 
     active_id = clean_state["active_scheme_id"]
     answers = parse.get("answers", {}) if isinstance(parse.get("answers"), dict) else {}
     fact_ids = parse.get("fact_ids", [])[:3]
+    active_entry = scheme_entry(pack, active_id) if mode == "active" else None
+    if active_entry is not None:
+        if _looks_like_check_clarification(question):
+            parse = {**parse, "intent": "check_clarification", "answers": {}}
+        elif intent in {"greeting", "about", "unrelated", "check_answer"} and not answers:
+            pending = next((item for item in active_entry["criteria"]
+                            if item["id"] == clean_state.get("pending_criterion")), None)
+            value = _yes_no_fallback(question)
+            if pending is not None and value and _criterion_allowed(pending, value):
+                parse = {**parse, "intent": "check_answer", "answers": {pending["id"]: value}}
+        intent = parse["intent"]
+        answers = parse.get("answers", {}) if isinstance(parse.get("answers"), dict) else {}
     if intent in {"start_check", "switch_scheme", "scheme_info"} and not parse["scheme_id"]:
         keyword_scheme = _keyword_scheme(question)
         parse = {**parse, "scheme_id": keyword_scheme or (active_id if intent in {"start_check", "scheme_info"} else "")}
@@ -874,12 +1064,24 @@ def route_turn(question: str, state: Any = None, history: Any = None, evidence: 
             clean_state = _clean_state({**clean_state, "eligibility_mode": "off"})
         else:
             if intent == "stop_check":
-                return _decline_check(clean_state)
+                return _decline_check(clean_state, _conversation_text(parse, intent))
+            if intent == "check_clarification":
+                pending = next((item for item in entry["criteria"]
+                                if item["id"] == clean_state.get("pending_criterion")), None)
+                if pending is None:
+                    pending = _first_pending(entry["criteria"], clean_state.get("criteria_facts", {}))
+                if pending is not None:
+                    return _clarify_criterion(pack, entry, clean_state, pending, question)
             if intent == "switch_scheme" or (intent == "scheme_info" and scheme_id and scheme_id != active_id):
                 other = scheme_entry(pack, scheme_id) if scheme_id else None
                 if other is not None and other["scheme_id"] != active_id:
                     wiped = _new_scheme_state(clean_state, other["scheme_id"], question)
-                    return _scheme_info_answer(pack, other, fact_ids, with_offer=True, clean_state=wiped)
+                    requested_ids, reply_text = _facts_for_question(
+                        question, other, fact_ids, parse.get("reply_text", ""))
+                    return _scheme_info_answer(
+                        pack, other, requested_ids, with_offer=True, clean_state=wiped,
+                        reply_text=reply_text,
+                        ask_application_mode=_needs_application_choice(question, requested_ids))
             if intent in {"check_answer", "start_check", "scheme_info"}:
                 previous_facts = clean_state.get("criteria_facts", {})
                 facts = _apply_extracted_facts(previous_facts, answers, entry["criteria"])
@@ -887,9 +1089,8 @@ def route_turn(question: str, state: Any = None, history: Any = None, evidence: 
             else:
                 previous_facts = clean_state.get("criteria_facts", {})
             if intent in {"greeting", "about", "unrelated"}:
-                # Ordinary conversation while a check runs: fixed honest line,
-                # the check simply waits (state and pending criterion untouched).
-                reply = GREETING_TE if intent == "greeting" else (ABOUT_TE if intent == "about" else UNRELATED_TE)
+                # Ordinary LLM wording must leave the pending check untouched.
+                reply = _conversation_text(parse, intent)
                 return {"decision": "answer" if intent != "unrelated" else "abstain", "kind": "conversation",
                         "answer_text": reply, "citations": [], "next_steps": [],
                         "state": _clean_state({**clean_state, "last_question": question}), "evidence": []}
@@ -912,8 +1113,8 @@ def route_turn(question: str, state: Any = None, history: Any = None, evidence: 
     if intent == "stop_check":
         entry = scheme_entry(pack, active_id)
         if entry is not None and mode != "off":
-            return _decline_check(clean_state)
-        return {"decision": "answer", "kind": "conversation", "answer_text": CHECK_STOPPED_TE,
+            return _decline_check(clean_state, _conversation_text(parse, intent))
+        return {"decision": "answer", "kind": "conversation", "answer_text": _conversation_text(parse, intent),
                 "citations": [], "next_steps": [], "state": _clean_state({**clean_state, "last_question": question}),
                 "evidence": []}
 
@@ -940,19 +1141,24 @@ def route_turn(question: str, state: Any = None, history: Any = None, evidence: 
             fresh = _new_scheme_state(clean_state, entry["scheme_id"], question)
         else:
             fresh = clean_state
-        with_offer = not (mode == "offered" and entry["scheme_id"] == active_id)
-        return _scheme_info_answer(pack, entry, fact_ids, with_offer=with_offer, clean_state=fresh)
+        requested_ids, reply_text = _facts_for_question(
+            question, entry, fact_ids, parse.get("reply_text", ""))
+        with_offer = not (mode in {"offered", "done"} and entry["scheme_id"] == active_id)
+        return _scheme_info_answer(
+            pack, entry, requested_ids, with_offer=with_offer, clean_state=fresh,
+            reply_text=reply_text,
+            ask_application_mode=_needs_application_choice(question, requested_ids))
 
     if intent == "greeting":
-        return {"decision": "answer", "kind": "conversation", "answer_text": GREETING_TE,
+        return {"decision": "answer", "kind": "conversation", "answer_text": _conversation_text(parse, intent),
                 "citations": [], "next_steps": [], "state": _clean_state({**clean_state, "last_question": question}),
                 "evidence": []}
     if intent == "about":
-        return {"decision": "answer", "kind": "conversation", "answer_text": ABOUT_TE,
+        return {"decision": "answer", "kind": "conversation", "answer_text": _conversation_text(parse, intent),
                 "citations": [], "next_steps": [], "state": _clean_state({**clean_state, "last_question": question}),
                 "evidence": []}
     if intent == "unrelated":
-        return {"decision": "abstain", "kind": "conversation", "answer_text": UNRELATED_TE,
+        return {"decision": "abstain", "kind": "conversation", "answer_text": _conversation_text(parse, intent),
                 "citations": [], "next_steps": [], "state": _clean_state({**clean_state, "last_question": question}),
                 "evidence": []}
 

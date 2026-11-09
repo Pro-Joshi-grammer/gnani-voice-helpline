@@ -53,17 +53,18 @@ class SpeechTextTests(unittest.TestCase):
     def test_citation_markers_are_stripped(self):
         self.assertEqual(voice_server.speech_text("మీరు అర్హులు [C1] ఏమో చూద్దాం [2]."),
                          "మీరు అర్హులు ఏమో చూద్దాం.")
+        self.assertEqual(voice_server.speech_text("వివరాలు C1] [C2] ఉన్నాయి."), "వివరాలు ఉన్నాయి.")
 
-    def test_plain_url_is_removed_and_notice_appended_once(self):
+    def test_plain_url_is_removed_without_a_spoken_link_notice(self):
         text = "అధికారిక పోర్టల్ https://indiramma.telangana.gov.in/ లో దరఖాస్తు చేయవచ్చు."
         result = voice_server.speech_text(text)
         self.assertNotIn("https://", result)
-        self.assertIn("లింక్ స్క్రీన్‌పై", result)
-        self.assertEqual(result.count("లింక్ స్క్రీన్‌పై"), 1)
+        self.assertNotIn("లింక్ స్క్రీన్‌పై", result)
+        self.assertEqual(result, "అధికారిక పోర్టల్ లో దరఖాస్తు చేయవచ్చు.")
 
-    def test_markdown_link_label_survives_url_is_dropped(self):
+    def test_markdown_link_and_label_are_omitted_from_speech(self):
         self.assertEqual(voice_server.speech_text("పోర్టల్ [ఇక్కడ](https://x.gov) చూడండి."),
-                         "పోర్టల్ ఇక్కడ చూడండి. అధికారిక వెబ్‌సైటు లింక్ స్క్రీన్‌పై ఉంది.")
+                         "పోర్టల్ చూడండి.")
 
     def test_telugu_text_is_otherwise_untouched(self):
         text = "మోడలింగ్ లేని సాధారణ తెలుగు వాక్యం, ఒక్క మార్కర్ లేకుండా."
@@ -75,7 +76,7 @@ class SpeechTextTests(unittest.TestCase):
 
     def test_empty_and_marker_only_inputs(self):
         self.assertEqual(voice_server.speech_text(""), "")
-        self.assertEqual(voice_server.speech_text("[C1] https://x.gov"), voice_server._URL_NOTICE_TE)
+        self.assertEqual(voice_server.speech_text("[C1] https://x.gov"), "")
 
     def test_screen_text_is_not_part_of_this_contract(self):
         # The cleaner is only meant for TTS input; screen text is produced by

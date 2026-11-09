@@ -14,6 +14,7 @@ __pycache__/
 # --- local build artifacts ---
 *.zip
 tools/*.txt
+/data/newfile.txt
 
 # NOTE: frontend/vendor/vad/ (Silero VAD runtime: bundle, worklet, ONNX model,
 # ORT wasm) IS REQUIRED AT RUNTIME and must stay tracked. Only the repo-root

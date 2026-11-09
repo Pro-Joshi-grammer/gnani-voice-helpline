@@ -239,8 +239,8 @@
       "category": "women, household, subsidy",
       "status": "active",
       "status_note": "Launched 27 Feb 2024 by government order for white ration card holders with active domestic LPG connections.",
-      "summary_en": "Eligible white ration card families with an active domestic LPG connection get a domestic LPG refill at a subsidised Rs 500.",
-      "summary_te": "తెల్ల రేషన్ కార్డు ఉండి, క్రియాశీల గృహ గ్యాస్ కనెక్షన్ ఉన్న కుటుంబాలకు గృహ వినియోగ గ్యాస్ సిలిండర్ రూ. 500కే లభిస్తుంది.",
+      "summary_en": "Telangana-resident white ration card families with an active domestic LPG connection in a female family member’s name may receive a cylinder at an effective Rs 500 price through DBT.",
+      "summary_te": "తెలంగాణలోని తెల్ల రేషన్ కార్డు కుటుంబాలకు, మహిళా కుటుంబ సభ్యురాలి పేరుతో గృహ వినియోగ గ్యాస్ కనెక్షన్ ఉంటే, DBT ద్వారా రూ. 500కే సిలిండర్ లభించవచ్చు.",
       "facts": [
         {
           "id": "launch",
@@ -271,68 +271,91 @@
           ]
         },
         {
-          "id": "praja_palana",
-          "claim": "At launch only those who had applied during Praja Palana were eligible; the Civil Supplies Minister said those who had not applied could still enrol if they hold a white ration card and an LPG connection.",
-          "confidence": "medium",
+          "id": "eligibility_details",
+          "claim": "The supplied information lists Telangana residency, a valid White Ration Card, an active domestic LPG connection in a female family member’s name, and annual family income ideally below Rs 2 lakh.",
+          "answer_te": "తెలంగాణ నివాసి అయి, తెల్ల రేషన్ కార్డు మరియు మహిళా కుటుంబ సభ్యురాలి పేరుతో క్రియాశీల గృహ గ్యాస్ కనెక్షన్ ఉండాలి. కుటుంబ వార్షిక ఆదాయం సాధారణంగా రూ. 2 లక్షల లోపు ఉండాలని అందించిన సమాచారం చెబుతోంది.",
+          "confidence": "high",
           "source_ids": [
-            "ap7am-lpg-launch",
-            "sf-lpg-gj-guidelines"
+            "user-provided-verified-info"
           ]
         },
         {
-          "id": "scale",
-          "claim": "The minister said about 40 lakh families were expected to benefit.",
-          "confidence": "medium",
+          "id": "payment_mechanism",
+          "claim": "The supplied information says the family pays the full market price at delivery and the amount above Rs 500 is later deposited into the linked bank account through Direct Benefit Transfer (DBT).",
+          "answer_te": "డెలివరీ సమయంలో పూర్తి మార్కెట్ ధర చెల్లించాలి. రూ. 500కు మించిన మొత్తాన్ని ప్రభుత్వం DBT (ప్రభుత్వ సాయం నేరుగా బ్యాంకు ఖాతాలో జమ చేయడం) ద్వారా లింక్ చేసిన ఖాతాలో జమ చేస్తుంది.",
+          "confidence": "high",
           "source_ids": [
-            "sakshi-lpg-gj"
+            "user-provided-verified-info"
+          ]
+        },
+        {
+          "id": "required_documents",
+          "claim": "The supplied information lists White Ration Card, Aadhaar, LPG connection passbook/receipt showing consumer details, and bank passbook for an Aadhaar-seeded account.",
+          "answer_te": "తీసుకెళ్లాల్సిన పత్రాలు: తెల్ల రేషన్ కార్డు, ఆధార్‌, గ్యాస్ వినియోగదారు వివరాలున్న కనెక్షన్ పాస్‌బుక్‌/రసీదు, ఆధార్‌తో లింక్ చేసిన ఖాతా ఉన్న బ్యాంక్ పాస్‌బుక్‌.",
+          "confidence": "high",
+          "source_ids": [
+            "user-provided-verified-info"
+          ]
+        },
+        {
+          "id": "application_offline",
+          "claim": "Offline: collect the Praja Palana form from the local Gram Panchayat or Municipal ward office, fill the Mahalakshmi section and LPG Consumer Number/company, attach document copies, and submit at the Praja Palana Seva Kendram or MPDO/Tahsildar office.",
+          "answer_te": "ఆఫ్‌లైన్‌: గ్రామ పంచాయతీ లేదా మున్సిపల్ వార్డు కార్యాలయంలో ప్రజా పాలన ఫారం తీసుకోండి. మహాలక్ష్మి విభాగంలో LPG వినియోగదారు నంబర్‌, గ్యాస్ కంపెనీ పేరు రాసి, పత్రాల ప్రతులు జతచేసి ప్రజా పాలన సేవా కేంద్రం లేదా MPDO/తహసీల్దార్ కార్యాలయంలో ఇవ్వండి.",
+          "confidence": "high",
+          "source_ids": [
+            "user-provided-verified-info"
+          ]
+        },
+        {
+          "id": "application_online",
+          "claim": "If not registered in the initial drive or newly holding a White Ration Card, visit an authorized MeeSeva center; the operator maps the LPG connection and ration-card profile on Praja Palana. Do not share personal numbers in chat.",
+          "answer_te": "మొదట నమోదు కాకపోతే లేదా కొత్తగా తెల్ల రేషన్ కార్డు వచ్చినట్లయితే, అధీకృత మీ సేవ కేంద్రాన్ని సంప్రదించండి. అక్కడి ఆపరేటర్ గ్యాస్ కనెక్షన్‌, రేషన్ కార్డు వివరాలను ప్రజా పాలనలో అనుసంధానిస్తారు; ఈ చాట్‌లో వ్యక్తిగత నంబర్లు చెప్పవద్దు.",
+          "confidence": "high",
+          "source_ids": [
+            "user-provided-verified-info"
           ]
         }
       ],
       "criteria": [
         {
-          "id": "white_ration_card",
-          "question_te": "మీ కుటుంబానికి తెల్ల రేషన్ కార్డు (ఆహార భద్రతా కార్డు) ఉందా?",
+          "id": "telangana_resident",
+          "question_te": "మీరు తెలంగాణ నివాసినా?",
           "answer_type": "yes_no",
           "required": "yes",
-          "source_id": "sf-lpg-gj-guidelines",
-          "basis": "GO sanctions Rs 500 LPG refill to white ration card (food security card) holders.",
-          "fail_message_te": "ఈ పథకం తెల్ల రేషన్ కార్డు ఉన్న కుటుంబాలకు మాత్రమే.",
+          "source_id": "user-provided-verified-info",
+          "basis": "The supplied information lists Telangana residency.",
+          "fail_message_te": "ఈ పథకం తెలంగాణ నివాసుల కోసం మాత్రమే.",
+          "confidence": "high"
+        },
+        {
+          "id": "white_ration_card",
+          "question_te": "మీ కుటుంబానికి తెల్ల రేషన్ కార్డు ఉందా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "user-provided-verified-info",
+          "basis": "A valid White Ration Card is listed.",
+          "fail_message_te": "ఈ పథకానికి తెల్ల రేషన్ కార్డు అవసరం.",
           "confidence": "high"
         },
         {
           "id": "active_lpg_connection",
-          "question_te": "మీకు ప్రస్తుతం క్రియాశీలంగా ఉన్న గృహ వినియోగ గ్యాస్ కనెక్షన్ ఉందా?",
+          "question_te": "మీ కుటుంబంలో మహిళా సభ్యురాలి పేరుతో క్రియాశీల గృహ గ్యాస్ కనెక్షన్ ఉందా?",
           "answer_type": "yes_no",
           "required": "yes",
-          "source_id": "ap7am-lpg-launch",
-          "basis": "Eligible households must have an active domestic LPG connection.",
-          "fail_message_te": "ఈ పథకానికి క్రియాశీల గృహ గ్యాస్ కనెక్షన్ ఉండాలి.",
+          "source_id": "user-provided-verified-info",
+          "basis": "An active domestic LPG connection in a female family member’s name is listed.",
+          "fail_message_te": "మహిళా కుటుంబ సభ్యురాలి పేరుతో క్రియాశీల గృహ గ్యాస్ కనెక్షన్ ఉండాలని అందించిన సమాచారం చెబుతోంది.",
           "confidence": "high"
         }
       ],
       "unknown_in_sources": [
         {
-          "id": "connection_holder_name",
-          "topic": "Whether the LPG connection must be in a woman's name (one report says yes; others say in the applicant's name)",
-          "notice_te": "గ్యాస్ కనెక్షన్ మహిళ పేరు మీద ఉండాలా అనే విషయంలో మూలాలు ఒకేలా చెప్పడం లేదు — ధృవీకరించుకోండి."
-        },
-        {
           "id": "cylinder_cap",
           "topic": "Annual cap on subsidised cylinders",
           "notice_te": "సంవత్సరానికి ఎన్ని సిలిండర్లకు వర్తిస్తుందో మూలాల్లో స్పష్టంగా లేదు."
-        },
-        {
-          "id": "payment_mechanism",
-          "topic": "Whether the user pays Rs 500 at delivery or pays full price and gets the difference by transfer",
-          "notice_te": "రూ. 500 చెల్లించే విధానం (డెలివరీ సమయంలోనా, తర్వాత ఖాతాలో జమనా) మూలాల్లో స్పష్టంగా లేదు."
-        },
-        {
-          "id": "current_enrolment",
-          "topic": "Whether new enrolments are open now",
-          "notice_te": "ఇప్పుడు కొత్తగా నమోదు చేసుకునే అవకాశం ఉందో లేదో మూలాల్లో లేదు — గ్యాస్ ఏజెన్సీ/పౌర సరఫరాల శాఖ వద్ద చూడండి."
         }
       ],
-      "how_to_apply": "Originally via Praja Palana forms; the minister later said eligible families who had not applied could still enrol. Current procedure not confirmed.",
+      "how_to_apply": "Offline: complete the Mahalakshmi section of the Praja Palana form and submit copies at the Praja Palana Seva Kendram or MPDO/Tahsildar office. Online/alternate: visit an authorized MeeSeva center for LPG and ration-card mapping.",
       "portal": null
     },
     {
@@ -366,11 +389,11 @@
         },
         {
           "id": "conditions",
-          "claim": "Households need a white ration card linked with Aadhaar and a single domestic service connection linked to the ration card (USC number from the electricity bill).",
+          "claim": "A valid white ration/Food Security Card and one domestic service connection per family are listed; both homeowners and tenants are eligible.",
+          "answer_te": "తెల్ల రేషన్ కార్డు (ఆహార భద్రతా కార్డు) ఉండాలి; కుటుంబానికి ఒక గృహ విద్యుత్ కనెక్షన్‌కే వర్తిస్తుంది. సొంత ఇళ్లలో ఉండేవారితో పాటు అద్దె ఇళ్లలో ఉండేవారూ అర్హులు.",
           "confidence": "high",
           "source_ids": [
-            "sf-lpg-gj-guidelines",
-            "dtnext-gj-start"
+            "user-provided-verified-info"
           ]
         },
         {
@@ -398,48 +421,94 @@
           "source_ids": [
             "siasat-gruha-jyothi-launch"
           ]
+        },
+        {
+          "id": "eligibility_details",
+          "claim": "The supplied information lists permanent Telangana residency, a valid white ration/Food Security Card, a domestic connection, one connection per family, and monthly use up to 200 units; tenants are included.",
+          "answer_te": "తెలంగాణ శాశ్వత నివాసి అయి, తెల్ల రేషన్/ఆహార భద్రతా కార్డు ఉండాలి. గృహ వినియోగ కనెక్షన్‌పై నెలకు 200 యూనిట్ల వరకు ఉచితం; కుటుంబానికి ఒక్క కనెక్షన్ మాత్రమే. అద్దె ఇంట్లో ఉండేవారూ అర్హులు.",
+          "confidence": "high",
+          "source_ids": [
+            "user-provided-verified-info"
+          ]
+        },
+        {
+          "id": "required_documents",
+          "claim": "The supplied information lists Aadhaar, White Ration/Food Security Card, and a recent electricity bill showing the domestic service connection number.",
+          "answer_te": "తీసుకెళ్లాల్సిన పత్రాలు: ఆధార్‌, తెల్ల రేషన్ కార్డు (ఆహార భద్రతా కార్డు), ఇటీవలి విద్యుత్ బిల్లు. బిల్లులోని గృహ సర్వీస్ కనెక్షన్ నంబర్‌ను ఫారంలో సరిగ్గా నమోదు చేయండి.",
+          "confidence": "high",
+          "source_ids": [
+            "user-provided-verified-info"
+          ]
+        },
+        {
+          "id": "application_offline",
+          "claim": "Offline: collect the Praja Palana form from the local Gram Panchayat, Gram Sabha or Municipal Corporation, fill the Gruha Jyothi section and service number, attach copies, and submit at the Praja Palana Seva Kendram or designated local office.",
+          "answer_te": "ఆఫ్‌లైన్‌: గ్రామ పంచాయతీ, గ్రామ సభ లేదా మున్సిపల్ కార్యాలయంలో ప్రజా పాలన ఫారం తీసుకోండి. గృహ జ్యోతి విభాగంలో సర్వీస్ కనెక్షన్ నంబర్ రాసి, పత్రాల ప్రతులు జతచేసి ప్రజా పాలన సేవా కేంద్రం లేదా నియమిత స్థానిక కార్యాలయంలో ఇవ్వండి.",
+          "confidence": "high",
+          "source_ids": [
+            "user-provided-verified-info"
+          ]
+        },
+        {
+          "id": "application_online",
+          "claim": "If the initial application drive was missed, the supplied information lists an authorized MeeSeva center or the relevant electricity distribution company section office for linking the Aadhaar, ration card and service number; track status through the Praja Palana portal.",
+          "answer_te": "మొదటి దరఖాస్తు సమయంలో నమోదు కాకపోతే, అధీకృత మీ సేవ కేంద్రం లేదా సంబంధిత విద్యుత్ పంపిణీ సంస్థ సెక్షన్ కార్యాలయంలో ఆధార్‌, రేషన్ కార్డు, సర్వీస్ నంబర్ అనుసంధానం గురించి అడగండి. స్థితిని ప్రజా పాలన పోర్టల్‌లో చూడవచ్చు.",
+          "confidence": "high",
+          "source_ids": [
+            "user-provided-verified-info"
+          ]
         }
       ],
       "criteria": [
+        {
+          "id": "telangana_resident",
+          "question_te": "మీరు తెలంగాణ శాశ్వత నివాసినా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "user-provided-verified-info",
+          "basis": "The supplied information requires permanent Telangana residency.",
+          "fail_message_te": "ఈ పథకం తెలంగాణ శాశ్వత నివాసుల కోసం మాత్రమే.",
+          "confidence": "high"
+        },
         {
           "id": "white_ration_card",
           "question_te": "మీ కుటుంబానికి తెల్ల రేషన్ కార్డు (ఆహార భద్రతా కార్డు) ఉందా?",
           "answer_type": "yes_no",
           "required": "yes",
-          "source_id": "sf-lpg-gj-guidelines",
-          "basis": "Eligible beneficiaries must hold a valid white ration card.",
-          "fail_message_te": "ఈ పథకం తెల్ల రేషన్ కార్డు ఉన్న కుటుంబాలకు మాత్రమే.",
-          "confidence": "high"
-        },
-        {
-          "id": "ration_card_aadhaar_linked",
-          "question_te": "మీ రేషన్ కార్డు ఆధార్‌తో అనుసంధానమై ఉందా?",
-          "answer_type": "yes_no",
-          "required": "yes",
-          "source_id": "dtnext-gj-start",
-          "basis": "White ration card must be linked with Aadhaar.",
-          "fail_message_te": "రేషన్ కార్డు ఆధార్‌తో అనుసంధానం కావాలి.",
+          "source_id": "user-provided-verified-info",
+          "basis": "A valid White Ration/Food Security Card is listed.",
+          "fail_message_te": "ఈ పథకానికి తెల్ల రేషన్/ఆహార భద్రతా కార్డు అవసరం.",
           "confidence": "high"
         },
         {
           "id": "domestic_connection_linked",
-          "question_te": "మీ గృహ విద్యుత్ కనెక్షన్ (ఒకే సర్వీస్ కనెక్షన్) మీ రేషన్ కార్డుతో అనుసంధానమై ఉందా?",
+          "question_te": "మీ ఇంటి విద్యుత్ కనెక్షన్ గృహ వినియోగానిదేనా?",
           "answer_type": "yes_no",
           "required": "yes",
-          "source_id": "sf-lpg-gj-guidelines",
-          "basis": "Single domestic service connection linked to the ration card.",
-          "fail_message_te": "గృహ వినియోగ కనెక్షన్ ఒక్కటే, అది రేషన్ కార్డుతో అనుసంధానమై ఉండాలి.",
+          "source_id": "user-provided-verified-info",
+          "basis": "The subsidy applies to domestic/residential connections only.",
+          "fail_message_te": "ఈ సబ్సిడీ గృహ వినియోగ విద్యుత్ కనెక్షన్లకే వర్తిస్తుంది.",
+          "confidence": "high"
+        },
+        {
+          "id": "one_connection_per_family",
+          "question_te": "మీ కుటుంబం ఈ పథకం కోసం ఒకే విద్యుత్ కనెక్షన్‌ను ఉపయోగిస్తోందా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "user-provided-verified-info",
+          "basis": "Only one electricity connection per family is listed.",
+          "fail_message_te": "ఒక కుటుంబానికి ఒక విద్యుత్ కనెక్షన్‌కే ఈ పథకం వర్తిస్తుంది.",
           "confidence": "high"
         },
         {
           "id": "monthly_usage_within_200",
-          "question_te": "మీ నెలవారీ గృహ విద్యుత్ వినియోగం 200 యూనిట్లలోపేనా?",
+          "question_te": "మీ నెలవారీ వినియోగం 200 యూనిట్లలోపేనా?",
           "answer_type": "yes_no",
           "required": "yes",
-          "source_id": "siasat-gruha-jyothi-launch",
-          "basis": "Zero bill for consumption up to 200 units per month.",
-          "fail_message_te": "200 యూనిట్లు దాటిన నెలలో జీరో బిల్లు వర్తించదని నివేదికలు చెబుతున్నాయి.",
-          "confidence": "medium"
+          "source_id": "user-provided-verified-info",
+          "basis": "The supplied information lists a monthly cap of 200 units.",
+          "fail_message_te": "నెలకు 200 యూనిట్లు దాటితే ఆ నెలకు జీరో బిల్లు వర్తించదని అందించిన సమాచారం చెబుతోంది.",
+          "confidence": "high"
         }
       ],
       "unknown_in_sources": [
@@ -449,12 +518,12 @@
           "notice_te": "తెల్ల రేషన్ కార్డు తప్ప ఆదాయ పరిమితి ఉందా అనేది ప్రచురించిన మూలాల్లో లేదు."
         },
         {
-          "id": "rented_house",
-          "topic": "Rules for tenants whose connection is in the landlord's name",
-          "notice_te": "అద్దె ఇంట్లో ఉండి కనెక్షన్ యజమాని పేరు మీద ఉన్నవారికి నియమాలు మూలాల్లో లేవు."
+          "id": "rented_connection_name",
+          "topic": "Whether a rented household qualifies when the electricity connection is in the landlord’s name",
+          "notice_te": "అద్దె ఇంట్లో విద్యుత్ కనెక్షన్ యజమాని పేరు మీద ఉన్నప్పుడు ఎలా నమోదు చేయాలో మూలాల్లో స్పష్టంగా లేదు; విద్యుత్ శాఖలో ధృవీకరించండి."
         }
       ],
-      "how_to_apply": "Originally through Praja Palana. Unlinked eligible consumers can approach MPDO / Municipal Commissioner / electricity circle office with the white ration card and electricity bill.",
+      "how_to_apply": "Offline: fill the Gruha Jyothi section of the Praja Palana form, enter the domestic service number from the electricity bill and submit document copies at the designated local office. Online/alternate: an authorized MeeSeva center or the electricity distribution company section office can help link records; check status through Praja Palana.",
       "portal": null
     },
     {
@@ -651,63 +720,143 @@
           "source_ids": [
             "indiramma-indlu-summary"
           ]
+        },
+        {
+          "id": "priority_groups",
+          "claim": "Priority groups for this demo include SC, ST, BC and minority communities; widows; elderly people; persons with disabilities; transgender people; and Telangana movement activists. These are priority categories, not additional pass/fail criteria in this interview.",
+          "confidence": "high",
+          "source_ids": [
+            "indiramma-indlu-demo-guidance"
+          ]
+        },
+        {
+          "id": "required_documents",
+          "claim": "Documents to prepare: Aadhaar card, ration/FSC card, residence proof, income certificate (initial Praja Palana application records may affect whether a separate certificate is needed), caste certificate when applicable, bank passbook, land/site records when applicable, photographs, active mobile number, applicable special-category proof, and application/Praja Palana details if already applied. A no-house declaration may be requested. Do not share document numbers or upload documents in chat.",
+          "confidence": "high",
+          "source_ids": [
+            "indiramma-indlu-demo-guidance"
+          ]
+        },
+        {
+          "id": "application_process",
+          "claim": "Online: use the official Indiramma Indlu portal, create a profile or log in, complete the application, attach the required documents, submit, and save the confirmation number. Offline: ask at the local Gram Panchayat, Gram Sabha, or Municipal Corporation for the current form; complete the personal, income, and housing details, attach the required documents, submit it, and keep the acknowledgement.",
+          "confidence": "high",
+          "source_ids": [
+            "indiramma-indlu-demo-guidance",
+            "indiramma-portal"
+          ]
         }
       ],
       "criteria": [
         {
           "id": "owns_house",
-          "question_te": "మీ కుటుంబానికి ఇప్పుడు సొంత ఇల్లు ఉందా?",
+          "question_te": "భారతదేశంలో ఎక్కడైనా మీ కుటుంబానికి శాశ్వత ఇల్లు ఉందా?",
           "answer_type": "yes_no",
           "required": "no",
-          "source_id": "indiramma-indlu-summary",
-          "basis": "The Telangana Indiramma Indlu Scheme is a housing initiative that provides financial assistance to eligible, landless, and homeless families in Telangana to construct permanent houses on their own plots.",
-          "fail_message_te": "ఇందిరమ్మ ఇల్లు పథకం ఇప్పుడు సొంత ఇల్లు లేని (homeless) కుటుంబాల కోసం మాత్రమే ఉద్దేశించినది.",
+          "source_id": "indiramma-indlu-demo-guidance",
+          "basis": "The eligibility condition is that the family must not own a permanent house anywhere in India.",
+          "fail_message_te": "మీ కుటుంబానికి భారతదేశంలో శాశ్వత ఇల్లు ఉన్నందున, ఈ ప్రమాణం ప్రకారం మీరు అర్హత పొందరు.",
           "confidence": "high"
         },
         {
           "id": "telangana_family",
-          "question_te": "మీ కుటుంబం తెలంగాణలోనే నివసిస్తుందా?",
+          "question_te": "మీ కుటుంబం తెలంగాణలోనే శాశ్వతంగా నివసిస్తుందా?",
           "answer_type": "yes_no",
           "required": "yes",
           "source_id": "indiramma-indlu-summary",
-          "basis": "The Telangana Indiramma Indlu Scheme is a housing initiative that provides financial assistance to eligible, landless, and homeless families in Telangana to construct permanent houses on their own plots.",
+          "basis": "The Telangana Indiramma Indlu Scheme is for families residing in Telangana.",
           "fail_message_te": "ఈ పథకం తెలంగాణలో నివసించే కుటుంబాల కోసం మాత్రమే ఉద్దేశించినది.",
           "confidence": "high"
+        },
+        {
+          "id": "low_income",
+          "question_te": "మీ కుటుంబం తక్కువ ఆదాయం లేదా EWS వర్గానికి చెందుతుందా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "indiramma-indlu-demo-guidance",
+          "basis": "The eligibility condition includes low-income/EWS status.",
+          "fail_message_te": "ఈ ప్రమాణం ప్రకారం తక్కువ ఆదాయం లేదా EWS వర్గానికి చెందిన కుటుంబాలకు మాత్రమే పథకం వర్తిస్తుంది.",
+          "confidence": "high"
+        },
+        {
+          "id": "other_property",
+          "question_te": "ఇల్లు కట్టుకునే స్థలం తప్ప, మీ కుటుంబానికి మరే ఇతర స్థిరాస్తి ఉందా?",
+          "answer_type": "yes_no",
+          "required": "no",
+          "source_id": "indiramma-indlu-demo-guidance",
+          "basis": "Applicants must not own other property apart from the site for construction.",
+          "fail_message_te": "ఈ ప్రమాణం ప్రకారం ఇల్లు కట్టుకునే స్థలం మినహా ఇతర ఆస్తి ఉండకూడదు.",
+          "confidence": "high"
+        },
+        {
+          "id": "prior_housing_benefit",
+          "question_te": "మీ కుటుంబం గతంలో మరే ఇతర ప్రభుత్వ గృహ పథకం ద్వారా ప్రయోజనం పొందిందా?",
+          "answer_type": "yes_no",
+          "required": "no",
+          "source_id": "indiramma-indlu-demo-guidance",
+          "basis": "Applicants must not have previously received a benefit under another housing scheme.",
+          "fail_message_te": "ఇతర గృహ పథకం ద్వారా గతంలో ప్రయోజనం పొందిన కుటుంబాలకు ఈ ప్రమాణం వర్తించదు.",
+          "confidence": "high"
+        },
+        {
+          "id": "cure_area",
+          "question_te": "మీరు హైదరాబాద్ CURE/ORR పరిధిలోని ప్రాంతంలో నివసిస్తున్నారా?",
+          "answer_type": "list",
+          "required": [
+            "yes",
+            "no"
+          ],
+          "source_id": "indiramma-indlu-demo-guidance",
+          "basis": "Used only to decide whether the additional Hyderabad/CURE questions apply.",
+          "fail_message_te": "ఈ ప్రాంతానికి వర్తించే అదనపు ప్రమాణాలను అడుగుతాను.",
+          "confidence": "high",
+          "gate": false
+        },
+        {
+          "id": "cure_residence_years",
+          "question_te": "మీ కుటుంబం హైదరాబాద్ CURE/ORR పరిధిలో కనీసం 10 సంవత్సరాలుగా నివసిస్తుందా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "indiramma-indlu-demo-guidance",
+          "basis": "The Hyderabad/CURE area condition requires at least 10 years of residence.",
+          "fail_message_te": "హైదరాబాద్ CURE/ORR పరిధికి వర్తించే 10 సంవత్సరాల నివాస ప్రమాణం నెరవేరలేదు.",
+          "confidence": "high",
+          "condition": {
+            "id": "cure_area",
+            "value": "yes"
+          }
+        },
+        {
+          "id": "cure_income",
+          "question_te": "మీ కుటుంబ వార్షిక ఆదాయం ₹6 లక్షల లోపేనా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "indiramma-indlu-demo-guidance",
+          "basis": "The Hyderabad/CURE area condition sets annual family income below ₹6 lakh.",
+          "fail_message_te": "హైదరాబాద్ CURE/ORR ప్రాంతానికి వర్తించే ₹6 లక్షల వార్షిక ఆదాయ ప్రమాణం నెరవేరలేదు.",
+          "confidence": "high",
+          "condition": {
+            "id": "cure_area",
+            "value": "yes"
+          }
+        },
+        {
+          "id": "cure_property",
+          "question_te": "ORR/CURE పరిధిలో మీ కుటుంబానికి ఏదైనా ఇల్లు లేదా స్థిరాస్తి ఉందా?",
+          "answer_type": "yes_no",
+          "required": "no",
+          "source_id": "indiramma-indlu-demo-guidance",
+          "basis": "Hyderabad/CURE applicants must not own property within the relevant ORR/CURE area.",
+          "fail_message_te": "ORR/CURE పరిధిలో ఆస్తి ఉన్నందున, ఈ ప్రాంతానికి వర్తించే ప్రమాణం నెరవేరలేదు.",
+          "confidence": "high",
+          "condition": {
+            "id": "cure_area",
+            "value": "yes"
+          }
         }
       ],
-      "unknown_in_sources": [
-        {
-          "id": "parent_land",
-          "topic": "Whether land owned by parents (for example, a father's land) affects the applicant's eligibility",
-          "notice_te": "తల్లిదండ్రుల పేరిట ఉన్న భూమి అర్హతను ఏమాత్రం ప్రభావితం చేస్తుందో ప్రచురించిన మూలాల్లో పేర్కొనలేదు — అధికారిక పోర్టల్‌లో ధృవీకరించుకోవాలి."
-        },
-        {
-          "id": "joint_family",
-          "topic": "Whether a separate household (living apart from the parents' house) affects eligibility",
-          "notice_te": "కలిసి ఉండటం లేదా విడిపోయి ఉండటం అర్హతపై ఎలా ప్రభావం చూపుతుందో మూలాల్లో పేర్కొనలేదు — అధికారిక పోర్టల్‌లో ధృవీకరించుకోవాలి."
-        },
-        {
-          "id": "category_quota",
-          "topic": "SC/ST/BC or other category-based quotas, reservations, or priority lists",
-          "notice_te": "SC/ST/BC వంటి వర్గాలకు రిజర్వేషన్లు లేదా కోటాల గురించి ప్రచురించిన మూలాల్లో పేర్కొనలేదు — అధికారిక పోర్టల్‌లో ధృవీకరించుకోవాలి."
-        },
-        {
-          "id": "income_limit",
-          "topic": "Any income ceiling or asset/wealth criteria for beneficiaries",
-          "notice_te": "ఆదాయం లేదా ఆస్తి పరిమితుల గురించి ప్రచురించిన మూలాల్లో పేర్కొనలేదు — అధికారిక పోర్టల్‌లో ధృవీకరించుకోవాలి."
-        },
-        {
-          "id": "document_list",
-          "topic": "The list of documents required to apply",
-          "notice_te": "దరఖాస్తుకు కావాల్సిన ఆధారాల జాబితా ప్రచురించిన మూలాల్లో ఇంకా లేదు — అధికారిక పోర్టల్‌లో చూడండి."
-        },
-        {
-          "id": "go_citation",
-          "topic": "Government order number/title for the scheme",
-          "notice_te": "ఈ పథకం ప్రభుత్వ ఉత్తర్వు (GO) సంఖ్య మూలాల్లో లేదు."
-        }
-      ],
-      "how_to_apply": "Via the state portal https://indirammaindlu.telangana.gov.in/ . Document list not in sources.",
+      "unknown_in_sources": [],
+      "how_to_apply": "Online: use the official portal at https://indirammaindlu.telangana.gov.in/, create a profile or log in, complete and submit the application with the required documents, and save the confirmation number. Offline: ask at the local Gram Panchayat, Gram Sabha, or Municipal Corporation for the current form; complete the personal, income, and housing details, attach the required documents, submit it, and keep the acknowledgement.",
       "portal": "https://indirammaindlu.telangana.gov.in/"
     },
     {
@@ -717,8 +866,8 @@
       "category": "agriculture",
       "status": "active",
       "status_note": "Carried over from your verification file (checked 22 Oct 2026, Wanaparthy district page last updated 26 Sep 2025). Operational flows (apply, status, check amount) were NOT confirmed on the official portal and are excluded.",
-      "summary_en": "Income support of Rs 6,000 per acre per crop season (Rs 12,000 per acre a year for Rabi and Kharif) by DBT to small/marginal farmers, tenant farmers and agricultural labourers on agriculturally suitable land.",
-      "summary_te": "చిన్న/స్వల్ప రైతులు, కౌలు రైతులు, వ్యవసాయ కూలీలకు వ్యవసాయ యోగ్యమైన భూమికి ఎకరాకు ప్రతి పంట కాలానికి రూ. 6,000 (రబీ, ఖరీఫ్ కలిపి ఏడాదికి రూ. 12,000) నేరుగా బ్యాంకు ఖాతాలో జమ.",
+      "summary_en": "Telangana-resident small/marginal farmers with registered cultivable land, and eligible forest-land cultivators with RoFR pattas, may apply; tenant farmers and listed excluded categories are not covered.",
+      "summary_te": "తెలంగాణ నివాసులైన చిన్న/స్వల్ప రైతులు, అలాగే అటవీ హక్కుల గుర్తింపు పట్టా (RoFR) ఉన్న సాగుదారులు దరఖాస్తు చేసుకోవచ్చు; కౌలు రైతులు ఈ ప్రధాన పథకంలో అర్హులు కారు.",
       "facts": [
         {
           "id": "amount",
@@ -731,42 +880,65 @@
         },
         {
           "id": "dbt",
-          "claim": "Payment is by DBT into registered bank accounts, in phases during crop seasons.",
+          "claim": "Payment is by Direct Benefit Transfer (DBT) into an active bank account linked with Aadhaar and the land passbook.",
+          "answer_te": "సాయం DBT (ప్రభుత్వం నుంచి నేరుగా బ్యాంకు ఖాతాలో డబ్బు జమ కావడం) ద్వారా వస్తుంది. ఖాతా ఆధార్‌, భూమి పాస్‌బుక్‌తో లింక్ అయి ఉండాలి.",
           "confidence": "high",
           "source_ids": [
-            "rythu-bharosa-wanaparthy-summary"
+            "user-provided-verified-info"
           ]
         },
         {
           "id": "who",
-          "claim": "Tenant farmers and agricultural labourers are covered, along with small/marginal farmers.",
+          "claim": "Small and marginal farmers with cultivable agricultural land registered in Bhu Bharati/Dharani, and forest-land cultivators holding valid Recognition of Forest Rights (RoFR) pattas, are listed.",
+          "answer_te": "భూ భారతి/ధరణిలో నమోదైన సాగుకు అనువైన భూమి ఉన్న చిన్న/స్వల్ప రైతులు, అలాగే RoFR పట్టా (అటవీ హక్కుల కింద ఇచ్చిన హక్కు పత్రం) ఉన్న అటవీ భూమి సాగుదారులు ఈ జాబితాలో ఉన్నారు.",
           "confidence": "high",
           "source_ids": [
-            "rythu-bharosa-wanaparthy-summary"
+            "user-provided-verified-info"
           ]
         },
         {
           "id": "exclusions",
-          "claim": "Mining, industrial and real-estate land is excluded; only agriculturally suitable land qualifies.",
+          "claim": "Non-cultivable land, commercial/real-estate property, mining sites and government-acquired zones are excluded. Regular tenant farmers, government employees, income-tax payers and political post-holders are also excluded from the main scheme.",
+          "answer_te": "సాగుకు పనికిరాని భూమి, వాణిజ్య/రియల్ ఎస్టేట్ స్థలం, గనుల ప్రాంతం, ప్రభుత్వం స్వాధీనం చేసుకున్న భూమి అర్హం కాదు. కౌలు రైతులు, ప్రభుత్వ ఉద్యోగులు, ఆదాయపు పన్ను చెల్లించేవారు, రాజకీయ పదవిలో ఉన్నవారూ ఈ ప్రధాన పథకానికి అర్హులు కారు.",
           "confidence": "high",
           "source_ids": [
-            "rythu-bharosa-wanaparthy-summary"
+            "user-provided-verified-info"
           ]
         },
         {
-          "id": "documents",
-          "claim": "Aadhaar, land/lease proof, bank passbook, ration card, domicile proof, mobile number and PAN are listed as required documents.",
+          "id": "required_documents",
+          "claim": "The supplied information lists Aadhaar, land ownership documents/Pattadar Passbook, bank passbook with account and IFSC details, domicile/residence proof, and ration card if applicable.",
+          "answer_te": "తీసుకెళ్లాల్సిన పత్రాలు: ఆధార్‌, భూమి యాజమాన్య పత్రాలు/పట్టాదారు పాస్‌బుక్‌, ఖాతా మరియు IFSC (బ్యాంకు శాఖ గుర్తింపు కోడ్) ఉన్న బ్యాంక్ పాస్‌బుక్‌, నివాస ధృవీకరణ పత్రం; వర్తిస్తే రేషన్ కార్డు.",
           "confidence": "high",
           "source_ids": [
-            "rythu-bharosa-wanaparthy-summary"
+            "user-provided-verified-info"
           ]
         },
         {
-          "id": "blanket_claim_contradicted",
-          "claim": "The sentence 'all farmers residing in Telangana and owning lands are eligible' is contradicted by the detailed eligibility section and must not be used.",
+          "id": "eligibility_details",
+          "claim": "Applicants are described as Telangana permanent residents, generally aged 18–59, with the listed eligible agricultural land/category and bank account linked with Aadhaar and land passbook.",
+          "answer_te": "సాధారణంగా 18–59 ఏళ్ల తెలంగాణ శాశ్వత నివాసులు, చెప్పిన అర్హత గల వ్యవసాయ భూమి/వర్గానికి చెందినవారు కావాలి. బ్యాంక్ సీడింగ్ (బ్యాంకు ఖాతాను ఆధార్‌తో లింక్ చేయడం) మరియు భూమి పాస్‌బుక్‌తో అనుసంధానం ఉండాలి.",
           "confidence": "high",
           "source_ids": [
-            "rythu-bharosa-wanaparthy-summary"
+            "user-provided-verified-info"
+          ]
+        },
+        {
+          "id": "application_offline",
+          "claim": "Offline: collect the standard Rythu Bharosa form from Gram Panchayat, Gram Sabha or Municipal Corporation; attach copies of the listed documents; submit at the local office or designated Praja Palana field camp for land verification.",
+          "answer_te": "ఆఫ్‌లైన్‌: గ్రామ పంచాయతీ, గ్రామ సభ లేదా మున్సిపల్ కార్పొరేషన్‌లో ఫారం తీసుకుని, అవసరమైన పత్రాల ప్రతులు జతచేసి అదే కార్యాలయంలో లేదా ప్రజా పాలన శిబిరంలో ఇవ్వండి. వ్యవసాయ విస్తరణ అధికారి (AEO) భూమి వివరాలు పరిశీలిస్తారు.",
+          "confidence": "high",
+          "source_ids": [
+            "user-provided-verified-info"
+          ]
+        },
+        {
+          "id": "application_online",
+          "claim": "Online: visit an authorized Common Service Center (CSC) or digital MeeSeva/Praja Palana center; the operator submits the form to the official portal. Keep the Aadhaar-linked mobile active for possible OTP verification; do not share details in chat.",
+          "answer_te": "ఆన్‌లైన్‌: అధీకృత CSC (ప్రభుత్వ సేవల కేంద్రం), డిజిటల్ మీ సేవ లేదా ప్రజా పాలన కేంద్రాన్ని సంప్రదించండి. అక్కడి ఆపరేటర్ అధికారిక పోర్టల్‌లో నమోదు చేస్తారు. OTP అవసరమైతే ఆధార్‌తో లింక్ చేసిన మొబైల్‌ను సిద్ధంగా ఉంచండి; ఈ చాట్‌లో వివరాలు చెప్పవద్దు.",
+          "confidence": "high",
+          "source_ids": [
+            "user-provided-verified-info"
           ]
         },
         {
@@ -781,36 +953,62 @@
       "criteria": [
         {
           "id": "telangana_resident",
-          "question_te": "మీరు తెలంగాణలోనే నివసిస్తున్నారా?",
+          "question_te": "మీరు తెలంగాణ శాశ్వత నివాసినా?",
           "answer_type": "yes_no",
           "required": "yes",
-          "source_id": "rythu-bharosa-wanaparthy-summary",
-          "basis": "To qualify for the Telangana Rythu Bharosa Scheme, applicants must meet the following eligibility criteria: Must be a resident of Telangana.",
-          "fail_message_te": "ఈ పథకం తెలంగాణలో నివసించే కుటుంబాల కోసం మాత్రమే ఉద్దేశించినది.",
+          "source_id": "user-provided-verified-info",
+          "basis": "Applicants must be permanent residents of Telangana.",
+          "fail_message_te": "ఈ పథకం తెలంగాణ శాశ్వత నివాసుల కోసం మాత్రమే.",
+          "confidence": "high"
+        },
+        {
+          "id": "eligible_agri_category",
+          "question_te": "మీకు భూ భారతి/ధరణిలో నమోదైన సాగు భూమి ఉందా, లేదా చెల్లుబాటు అయ్యే RoFR పట్టాతో అటవీ భూమి సాగు చేస్తున్నారా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "user-provided-verified-info",
+          "basis": "The supplied information lists small/marginal farmers with registered cultivable land and forest cultivators with valid RoFR pattas.",
+          "fail_message_te": "నమోదైన సాగు భూమి ఉన్న చిన్న/స్వల్ప రైతులు లేదా చెల్లుబాటు అయ్యే RoFR పట్టా ఉన్న అటవీ సాగుదారులకే ఈ ప్రమాణం వర్తిస్తుంది.",
+          "confidence": "high"
+        },
+        {
+          "id": "not_tenant_farmer",
+          "question_te": "మీరు కేవలం కౌలుకు భూమి తీసుకుని సాగు చేసే రైతు కాదా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "user-provided-verified-info",
+          "basis": "Regular tenant farmers are excluded from the main Rythu Bharosa scheme in the supplied information.",
+          "fail_message_te": "కౌలు రైతులు ప్రధాన రైతు భరోసా పథకంలో అర్హులు కారని అందించిన సమాచారం చెబుతోంది.",
           "confidence": "high"
         },
         {
           "id": "age_18_59",
-          "question_te": "మీ వయసు 18 నుంచి 59 ఏళ్ల మధ్య ఉందా?",
+          "question_te": "మీ వయసు సాధారణంగా 18 నుంచి 59 ఏళ్ల మధ్య ఉందా?",
           "answer_type": "yes_no",
           "required": "yes",
-          "source_id": "rythu-bharosa-wanaparthy-summary",
-          "basis": "To qualify for the Telangana Rythu Bharosa Scheme, applicants must meet the following eligibility criteria: Be between the ages of 18 and 59.",
-          "fail_message_te": "ప్రచురించిన ప్రమాణాల ప్రకారం అర్హత వయసు 18 నుంచి 59 ఏళ్ల మధ్య ఉన్నవారికి మాత్రమే.",
+          "source_id": "user-provided-verified-info",
+          "basis": "The supplied information gives the general age range as 18–59.",
+          "fail_message_te": "అందించిన ప్రమాణం సాధారణంగా 18 నుంచి 59 ఏళ్ల వయసు పరిధిని సూచిస్తోంది.",
           "confidence": "high"
         },
         {
-          "id": "agri_role",
-          "question_te": "వ్యవసాయానికి అనువైన భూమిపై మీ పాత్ర ఏది — చిన్న లేదా స్వల్ప రైతు (సొంత భూమి), కౌలుకు వ్యవసాయం చేసే రైతు, లేదా వ్యవసాయ కూలీ?",
-          "answer_type": "list",
-          "required": [
-            "small_or_marginal_farmer",
-            "tenant_farmer",
-            "agricultural_labourer"
-          ],
-          "source_id": "rythu-bharosa-wanaparthy-summary",
-          "basis": "To qualify for the Telangana Rythu Bharosa Scheme, applicants must meet the following eligibility criteria: Should be a small or marginal farmer engaged in agriculture; Tenant farmers leasing agricultural land are eligible; Agricultural labourers are eligible; Must own/lease agriculturally suitable lands. Mining areas, industrial zones and real estate lands are excluded.",
-          "fail_message_te": "ఈ పథకం చిన్న/స్వల్ప రైతుల, కౌలు రైతుల, వ్యవసాయ కూలీల కోసం మాత్రమే; గనులు, పరిశ్రమలు, రియల్ ఎస్టేట్ వాడకం ఉన్న భూములు అర్హత పరిధిలో లేవు.",
+          "id": "bank_account_linked",
+          "question_te": "మీ క్రియాశీల బ్యాంక్ ఖాతా ఆధార్‌ మరియు భూమి పాస్‌బుక్‌తో లింక్ అయిందా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "user-provided-verified-info",
+          "basis": "An active bank account linked with Aadhaar and the land passbook is listed.",
+          "fail_message_te": "క్రియాశీల బ్యాంక్ ఖాతా ఆధార్‌ మరియు భూమి పాస్‌బుక్‌తో లింక్ అయి ఉండాలి.",
+          "confidence": "high"
+        },
+        {
+          "id": "not_excluded_group",
+          "question_te": "మీరు ప్రభుత్వ ఉద్యోగి, ఆదాయపు పన్ను చెల్లింపుదారు లేదా రాజకీయ పదవిలో ఉన్నవారు కాదా?",
+          "answer_type": "yes_no",
+          "required": "yes",
+          "source_id": "user-provided-verified-info",
+          "basis": "Government employees, income-tax payers and political post-holders are listed as excluded.",
+          "fail_message_te": "ప్రభుత్వ ఉద్యోగులు, ఆదాయపు పన్ను చెల్లించేవారు, రాజకీయ పదవిలో ఉన్నవారికి ఈ పథకం వర్తించదని అందించిన సమాచారం చెబుతోంది.",
           "confidence": "high"
         }
       ],
@@ -821,22 +1019,12 @@
           "notice_te": "చిన్న/స్వల్ప రైతు అంటే ఏ భూమి పరిమాణం అనే నిర్వచనం మూలంలో పేర్కొనలేదు — అధికారిక పోర్టల్‌లో ధృవీకరించుకోవాలి."
         },
         {
-          "id": "landless_labourer_proof",
-          "topic": "How landless agricultural labourers prove eligibility and what documents they need",
-          "notice_te": "భూమి లేని వ్యవసాయ కూలీలు అర్హతను ఎలా రుజువు చేయాలో మూలాల్లో పేర్కొనలేదు — అధికారిక పోర్టల్‌లో చూడండి."
-        },
-        {
           "id": "rythu_bandhu_overlap",
           "topic": "Relationship between Rythu Bharosa and the earlier Rythu Bandhu scheme (who gets what)",
           "notice_te": "ఇది పాత రైత్ బంధు పథకంతో ఎలా ముడిపడి ఉందో, ఎవరికి ఏది వర్తిస్తుందో మూలంలో స్పష్టంగా లేదు — అధికారిక పోర్టల్‌లో ధృవీకరించుకోవాలి."
-        },
-        {
-          "id": "apply_and_status_flow",
-          "topic": "Online apply, status check and 'check amount' flows (stated on the district page but not confirmed on the official portal)",
-          "notice_te": "ఆన్‌లైన్ దరఖాస్తు, స్థితి తనిఖీ విధానాలు అధికారిక పోర్టల్‌లో నిర్ధారణ కాలేదు — పోర్టల్ లేదా గ్రామ పంచాయతీలో చూడండి."
         }
       ],
-      "how_to_apply": "Details not confirmed on the official portal landing page; see portal.",
+      "how_to_apply": "Offline: collect the form from Gram Panchayat/Gram Sabha/Municipal Corporation, attach document copies, and submit at the local office or designated Praja Palana camp. Online: use an authorized CSC, digital MeeSeva or Praja Palana center. The operator submits it; land verification follows.",
       "portal": "https://rythubharosa.telangana.gov.in/"
     },
     {
@@ -1728,6 +1916,12 @@
       "url": "https://indirammaindlu.telangana.gov.in/",
       "tier": "official"
     },
+    "indiramma-indlu-demo-guidance": {
+      "title": "Indiramma Indlu eligibility and application guide",
+      "publisher": "Scheme information",
+      "url": "",
+      "tier": "reference"
+    },
     "livelaw-lic-bima": {
       "title": "Court judgment extract on Rythu Bima enrolment rules",
       "publisher": "LiveLaw (PDF)",
@@ -1952,6 +2146,13 @@
       "publisher": "Vikaspedia",
       "url": "https://en.vikaspedia.in/viewcontent/women/women-empowerment/free-bus-travel-for-women",
       "tier": "secondary"
+    },
+    "user-provided-verified-info": {
+      "title": "User-provided verified scheme information (data/newfile.txt)",
+      "publisher": "User-provided information file",
+      "url": "",
+      "date": "",
+      "tier": "user_provided"
     }
   }
 }
