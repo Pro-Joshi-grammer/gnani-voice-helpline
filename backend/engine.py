@@ -27,7 +27,7 @@ MAX_TURN_TEXT = 1200
 MAX_HISTORY = 8
 MAX_STATE_BYTES = 12 * 1024
 
-ELIGIBILITY_MODES = {"off", "offered", "active", "done"}
+ELIGIBILITY_MODES = {"off", "offered", "active", "paused", "done"}
 YES_NO_VALUES = {"yes", "no"}
 STATUSES_NEEDING_A_NOTE = {
     "disputed", "not_confirmed_launched", "completed_one_time",
@@ -385,24 +385,37 @@ def _keyword_scheme(question: str) -> str:
 # Lexicons below are ONLY the deterministic fallback when the tiny LLM parser is
 # unreachable — the primary interpretation of every turn is the LLM by meaning.
 
-_YES_WORDS = ["yes", " ok", "sare", "అవును", "ఉంది", "ఉన్నా", "చేస్తున్న", "సరే"]
-_NO_WORDS = [" no", "nope", "లేదు", "ఉండదు", "వద్దు", "కాదు"]
+_YES_WORDS = ["yes", "yeah", "yep", "correct", "avunu", "avunandi", "ounu", "sare", "okay",
+              "అవును", "అవునండి", "ఔను", "సరే", "ఉంది", "ఉన్నాయి"]
+_NO_WORDS = ["no", "nope", "nah", "ledu", "ledandi", "kaadu", "kadhu", "kaadhu", "కాదు", "కాదండి",
+             "లేదు", "లేదండి", "ఉండదు", "వద్దు"]
+_UNSURE_WORDS = ["తెలియదు", "తెలీదు", "చెప్పలేను", "కచ్చితంగా చెప్పలేను", "నిర్ధారించలేను",
+                 "not sure", "unsure", "don't know", "dont know", "maybe", "కావచ్చు"]
 _GREETING_WORDS = ["namaste", "namaskaram", "hello", "hai", "నమస్కారం", "నమస్తే", "హాయ్", "హలో"]
 _ABOUT_WORDS = ["ఎవరు", "what can you do", "how do you work", "ఎలా పని", "who are you"]
-_STOP_WORDS = ["ఆపు", "చాలు", "stop", "ఆపేయి", "తనిఖీ వద్దు"]
+_STOP_WORDS = ["ఆపు", "చాలు", "stop", "ఆపేయి", "తనిఖీ వద్దు", "cancel check", "cancel eligibility"]
+_PAUSE_WORDS = ["pause", "later", "తర్వాత", "ఆగు", "ఇప్పుడు వద్దు", "తర్వాత చూద్దాం"]
+_RESUME_WORDS = ["resume", "continue check", "మళ్లీ మొదలు", "తనిఖీ కొనసాగించు", "అర్హత చెక్ కొనసాగించు"]
 _CHECK_CLARIFICATION_WORDS = ["అంటే ఏంటి", "అంటే ఏమిటి", "అర్థం ఏమిటి", "ఏమిటి", "ఏంటి", "లాంటిదా",
                                "what does", "what do you mean", "meaning of", "explain"]
+_SCHEME_QUESTION_WORDS = ["document", "పత్ర", "డాక్యుమెంట్", "apply", "application", "దరఖాస్తు", "అప్లై",
+                          "ఎక్కడ", "ఎలా", "ఏమిటి", "ఎంత", "ఎవరు", "అర్హత", "benefit", "దొరుకుతుందా"]
 
 
 def _yes_no_fallback(question: str) -> str:
-    text = f" {question.lower()} "
+    text = re.sub(r"[.,!?;:]+", " ", str(question).lower())
+    text = re.sub(r"\s+", " ", text).strip()
+    if any(word in text for word in _UNSURE_WORDS):
+        return ""
     hit_yes = any(word in text for word in _YES_WORDS)
     hit_no = any(word in text for word in _NO_WORDS)
-    if hit_no and not hit_yes:
-        return "no"
-    if hit_yes and not hit_no:
-        return "yes"
-    return ""
+    if hit_yes == hit_no:
+        return ""
+    # The fallback is intentionally limited to short, direct confirmations. A
+    # longer statement needs the structured parser to map its criterion safely.
+    if len(text.split()) > 8 or "?" in question:
+        return ""
+    return "yes" if hit_yes else "no"
 
 
 def _word_hit(question: str, words: list[str]) -> bool:
@@ -412,6 +425,19 @@ def _word_hit(question: str, words: list[str]) -> bool:
 
 def _looks_like_check_clarification(question: str) -> bool:
     return _word_hit(question, _CHECK_CLARIFICATION_WORDS)
+
+
+def _accepts_check_offer(question: str) -> bool:
+    text = str(question).lower()
+    if _word_hit(text, _STOP_WORDS + ["వద్దు", "అక్కర్లేదు", "ఇప్పుడు కాదు", "not now", "no thanks"]):
+        return False
+    if _yes_no_fallback(text) == "yes":
+        return True
+    return _word_hit(text, [
+        "చూడాలనుకుంటున్నా", "చెక్ చేయండి", "చెక్ చేద్దాం", "అర్హత చెక్", "అడగండి",
+        "ప్రశ్నలు అడగండి", "తెలుసుకోవాలనుకుంటున్నా", "ask me", "go ahead", "let's check",
+        "check my eligibility",
+    ])
 
 
 # ---------------- session state (transient; lives only in the browser) ----------------
@@ -431,6 +457,20 @@ def _clean_state(state: Any) -> dict[str, Any]:
         else:
             facts[clean_key] = {"value": str(value)[:80], "source": "user_stated"}
     mode = str(state.get("eligibility_mode", "off")).strip().lower()
+    method = str(state.get("application_method", "")).strip().lower()
+    paused_checks = {}
+    raw_paused = state.get("paused_checks") if isinstance(state.get("paused_checks"), dict) else {}
+    for scheme_id, checkpoint in list(raw_paused.items())[:4]:
+        if not isinstance(checkpoint, dict):
+            continue
+        checkpoint_facts = checkpoint.get("criteria_facts") if isinstance(checkpoint.get("criteria_facts"), dict) else {}
+        paused_checks[str(scheme_id).strip()[:60]] = {
+            "criteria_facts": {str(key)[:60]: {"value": str(value.get("value", ""))[:80], "source": "user_stated"}
+                               for key, value in list(checkpoint_facts.items())[:12] if isinstance(value, dict)},
+            "pending_criterion": str(checkpoint.get("pending_criterion", ""))[:60],
+            "unknown_notices": [str(value)[:60] for value in checkpoint.get("unknown_notices", [])[:8]
+                                if isinstance(value, str)],
+        }
     cleaned = {
         "topic": str(state.get("topic", ""))[:160],
         "last_question": str(state.get("last_question", ""))[:MAX_TURN_TEXT],
@@ -440,6 +480,9 @@ def _clean_state(state: Any) -> dict[str, Any]:
         "pending_criterion": str(state.get("pending_criterion", "")).strip()[:60],
         "unknown_notices": [str(value).strip()[:60] for value in state.get("unknown_notices", [])[:8]
                             if isinstance(value, str) and value.strip()],
+        "application_method": method if method in {"online", "offline"} else "",
+        "application_choice_pending": state.get("application_choice_pending") is True,
+        "paused_checks": paused_checks,
         "offer_declined": state.get("offer_declined") is True,
     }
     encoded = json.dumps(cleaned, ensure_ascii=False)
@@ -448,7 +491,8 @@ def _clean_state(state: Any) -> dict[str, Any]:
     crumbs = {"topic": cleaned["topic"][:80], "last_question": cleaned["last_question"][:300],
               "active_scheme_id": cleaned["active_scheme_id"], "eligibility_mode": "off",
               "criteria_facts": {}, "pending_criterion": "", "unknown_notices": [],
-              "offer_declined": False}
+              "application_method": "", "application_choice_pending": False,
+              "paused_checks": {}, "offer_declined": False}
     return crumbs
 
 
@@ -519,7 +563,8 @@ def _dedupe_citations(citations: list[dict[str, Any]]) -> list[dict[str, Any]]:
 # ---------------- the tiny turn parser (the only LLM call; judged by meaning) ----------------
 
 _PARSE_INTENTS = {"greeting", "about", "scheme_info", "start_check", "check_answer",
-                  "check_clarification", "stop_check", "switch_scheme", "unrelated"}
+                  "check_clarification", "pause_check", "resume_check", "stop_check",
+                  "switch_scheme", "unrelated"}
 
 
 def _check_parse_shape(data: Any, pack: dict[str, Any], entry: dict[str, Any] | None) -> None:
@@ -567,7 +612,7 @@ def _parse_turn(question: str, clean_state: dict[str, Any], clean_history: list[
     """
     active = scheme_entry(pack, clean_state.get("active_scheme_id", ""))
     mode = clean_state.get("eligibility_mode", "off")
-    if active is not None and mode in {"offered", "active", "done"}:
+    if active is not None and mode in {"offered", "active", "paused", "done"}:
         criteria_lines = "\n".join(
             f'- {criterion["id"]}: {criterion["question_te"]} '
             f'(allowed: {"yes, no" if criterion["answer_type"] == "yes_no" else ", ".join(criterion["required"])})'
@@ -601,18 +646,22 @@ def _parse_turn(question: str, clean_state: dict[str, Any], clean_history: list[
         "- scheme_info: asks about or seeks a recommendation for a scheme — benefits, who is covered, "
         "application steps, documents, status, or a scheme fitting the user's stated need.\n"
         "- start_check: agrees to the offered eligibility check, or asks for a check by name.\n"
-        "- check_answer: answers the pending eligibility question or states facts about the user's "
-        "own situation relevant to the running check.\n"
+        "- check_answer: directly answers the pending question, corrects a previous answer, or clearly states "
+        "one or more facts about the user's own situation relevant to this check. Extract every clearly supported "
+        "criterion answer in the utterance; leave uncertain or conflicting answers out. Never infer land ownership "
+        "from cultivation or confuse leased land with owned/registered land.\n"
         "- check_clarification: asks what the pending eligibility question means or asks for an example; "
         "briefly explain it in simple Telugu without answering for the user.\n"
-        "- stop_check: wants a running or offered check stopped.\n"
+        "- pause_check: asks to pause, wait, or come back to the eligibility check later.\n"
+        "- resume_check: explicitly asks to continue a paused eligibility check.\n"
+        "- stop_check: explicitly cancels a running or offered check.\n"
         "- switch_scheme: clearly moves to a different scheme.\n"
         "- unrelated: anything else (other government services, personal tasks, opinions).\n"
         "scheme_id: the exact scheme id listed below when one is named or clearly meant, else \"\".\n"
-        "answers: only for check_answer turns — object {criterion_id: value} using EXACTLY the running "
-        "check's allowed ids and allowed values below. One answer per mention, mapped from the user's "
-        "own words to the value the criterion expects (yes_no → \"yes\" or \"no\"; list → one listed "
-        "value). Never invent an id or a value.\n"
+        "answers: for check_answer turns, return an object {criterion_id: value} using EXACTLY the running "
+        "check's allowed ids and values below. Extract multiple clearly stated facts and corrections from one "
+        "utterance. Map yes_no only to \"yes\" or \"no\"; map list answers to one allowed value. Omit uncertain, "
+        "ambiguous, or conflicting answers; never invent an id or value. For any other intent, answers must be {}.\n"
         "fact_ids: for scheme_info, select up to 3 exact fact ids from the selected scheme that support "
         "your response; else []. Never cite facts from another scheme.\n"
         "reply_text: for scheme_info, answer the user's question directly in one concise (ideally 1-3 short "
@@ -678,18 +727,27 @@ def _fallback_parse(question: str, clean_state: dict[str, Any], pack: dict[str, 
         return {"intent": "about", "scheme_id": "", "answers": {}, "fact_ids": []}
     if _word_hit(question, _STOP_WORDS):
         return {"intent": "stop_check", "scheme_id": "", "answers": {}, "fact_ids": []}
-    if (clean_state.get("eligibility_mode") == "active" and clean_state.get("pending_criterion")
+    if _word_hit(question, _PAUSE_WORDS):
+        return {"intent": "pause_check", "scheme_id": "", "answers": {}, "fact_ids": []}
+    if _word_hit(question, _RESUME_WORDS):
+        return {"intent": "resume_check", "scheme_id": "", "answers": {}, "fact_ids": []}
+    if (clean_state.get("eligibility_mode") in {"active", "paused"}
             and _looks_like_check_clarification(question)):
         return {"intent": "check_clarification", "scheme_id": "", "answers": {}, "fact_ids": []}
+    if clean_state.get("eligibility_mode") in {"active", "paused"} and _word_hit(
+            question, ["తెలియదు", "తెలీదు", "గుర్తులేదు", "not sure", "don't know", "dont know", "unsure"]):
+        return {"intent": "unrelated", "scheme_id": "", "answers": {}, "fact_ids": []}
+    scheme_id = _keyword_scheme(question)
+    active_id = clean_state.get("active_scheme_id", "")
+    if scheme_id and scheme_id != active_id:
+        return {"intent": "switch_scheme", "scheme_id": scheme_id, "answers": {}, "fact_ids": []}
+    if scheme_id or (active_id and _word_hit(question, _SCHEME_QUESTION_WORDS)):
+        return {"intent": "scheme_info", "scheme_id": scheme_id or active_id,
+                "answers": {}, "fact_ids": []}
     value = _yes_no_fallback(question)
     if value and clean_state.get("eligibility_mode") == "active" and clean_state.get("pending_criterion"):
         return {"intent": "check_answer", "scheme_id": "",
                 "answers": {clean_state["pending_criterion"]: value}, "fact_ids": []}
-    scheme_id = _keyword_scheme(question)
-    if scheme_id:
-        if scheme_id != clean_state.get("active_scheme_id", ""):
-            return {"intent": "switch_scheme", "scheme_id": scheme_id, "answers": {}, "fact_ids": []}
-        return {"intent": "scheme_info", "scheme_id": scheme_id, "answers": {}, "fact_ids": []}
     return {"intent": "unrelated", "scheme_id": "", "answers": {}, "fact_ids": []}
 
 
@@ -776,9 +834,10 @@ def _scheme_info_answer(pack: dict[str, Any], entry: dict[str, Any], fact_ids: l
         decision = "answer"
     already_asked_channel = ("ఆన్‌లైన్" in answer_text and "ఆఫ్‌లైన్" in answer_text
                              and ("?" in answer_text or "చేయాలనుకుంటున్నారా" in answer_text))
+    state = {**clean_state, "active_scheme_id": entry["scheme_id"], "last_question": ""}
     if ask_application_mode and not already_asked_channel:
         answer_text += " మీరు ఆన్‌లైన్‌లో దరఖాస్తు చేయాలనుకుంటున్నారా, లేక ఆఫ్‌లైన్‌లోనా?"
-    state = {**clean_state, "active_scheme_id": entry["scheme_id"], "last_question": ""}
+        state["application_choice_pending"] = True
     next_steps = []
     if with_offer and entry["criteria"]:
         answer_text += " " + OFFER_TE
@@ -820,7 +879,7 @@ def _clarify_criterion(pack: dict[str, Any], entry: dict[str, Any], clean_state:
 
 def _ask_criterion(pack: dict[str, Any], entry: dict[str, Any], clean_state: dict[str, Any],
                    pending: dict[str, Any], repeat_prefix: bool = False) -> dict[str, Any]:
-    prefix = "అర్థం కాలేదు అన్నా, మళ్లీ అడుగుతాను — " if repeat_prefix else ""
+    prefix = "సరైన సమాధానం ఏదో ఒక్కసారి స్పష్టంగా చెప్పగలరా? " if repeat_prefix else ""
     value_hint = ""
     if pending["answer_type"] == "list":
         value_hint = " (" + ", ".join(pending["required"]) + ")"
@@ -877,7 +936,10 @@ def _conversation_text(parse: dict[str, Any], intent: str) -> str:
 
 
 def _decline_check(clean_state: dict[str, Any], reply_text: str = "") -> dict[str, Any]:
-    state = {**clean_state, "eligibility_mode": "off", "offer_declined": True, "pending_criterion": ""}
+    paused = dict(clean_state.get("paused_checks", {}))
+    paused.pop(clean_state.get("active_scheme_id", ""), None)
+    state = {**clean_state, "eligibility_mode": "off", "offer_declined": True, "pending_criterion": "",
+             "criteria_facts": {}, "paused_checks": paused, "application_choice_pending": False}
     return {
         "decision": "answer", "kind": "conversation", "answer_text": reply_text or CHECK_STOPPED_TE,
         "citations": [], "next_steps": [], "state": _clean_state(state), "evidence": [],
@@ -888,21 +950,32 @@ def _new_scheme_state(clean_state: dict[str, Any], scheme_id: str, question: str
     """A genuinely new scheme: eligibility facts from the old one must never leak."""
     return _clean_state({**clean_state, "active_scheme_id": scheme_id, "eligibility_mode": "off",
                          "criteria_facts": {}, "pending_criterion": "", "unknown_notices": [],
+                         "application_method": "", "application_choice_pending": False,
                          "offer_declined": False, "last_question": question})
 
 
-def _attach_unknown_notice(entry: dict[str, Any], reply: dict[str, Any],
-                           clean_state: dict[str, Any]) -> dict[str, Any]:
-    """Topics the pack lists under unknown_in_sources get their honest notice
-    exactly once, one per question turn; the flow keeps going either way."""
-    already = set(clean_state.get("unknown_notices", []))
-    unknown = next((item for item in entry["unknown_in_sources"] if item["id"] not in already), None)
-    if unknown is None:
-        return clean_state
-    reply["answer_text"] = f"{reply['answer_text']} {unknown['notice_te']}".strip()
-    reply["state"] = _clean_state({**reply["state"],
-                                   "unknown_notices": list(clean_state.get("unknown_notices", [])) + [unknown["id"]]})
-    return reply["state"]
+def _save_paused_check(state: dict[str, Any]) -> dict[str, Any]:
+    paused = dict(state.get("paused_checks", {}))
+    scheme_id = state.get("active_scheme_id", "")
+    if scheme_id and state.get("eligibility_mode") in {"active", "paused"}:
+        paused[scheme_id] = {"criteria_facts": state.get("criteria_facts", {}),
+                             "pending_criterion": state.get("pending_criterion", ""),
+                             "unknown_notices": state.get("unknown_notices", [])}
+    return _clean_state({**state, "paused_checks": paused})
+
+
+def _restore_paused_check(state: dict[str, Any], scheme_id: str) -> dict[str, Any] | None:
+    checkpoint = state.get("paused_checks", {}).get(scheme_id)
+    if not isinstance(checkpoint, dict):
+        return None
+    paused = dict(state.get("paused_checks", {}))
+    paused.pop(scheme_id, None)
+    return _clean_state({**state, "active_scheme_id": scheme_id, "eligibility_mode": "active",
+                         "criteria_facts": checkpoint.get("criteria_facts", {}),
+                         "pending_criterion": checkpoint.get("pending_criterion", ""),
+                         "unknown_notices": checkpoint.get("unknown_notices", []),
+                         "paused_checks": paused, "application_method": "",
+                         "application_choice_pending": False, "offer_declined": False})
 
 
 # ---------------- pure-Python eligibility evaluator (ported from the tested legacy core) ----------------
@@ -981,44 +1054,64 @@ def _apply_extracted_facts(facts: dict[str, Any], extracted: Any,
 
 # ---------------- the turn pipeline ----------------
 
+def _application_method(question: str) -> str:
+    text = str(question).lower().replace("ఆన్లైన్", "ఆన్‌లైన్").replace("ఆఫ్లైన్", "ఆఫ్‌లైన్")
+    online = any(token in text for token in ("online", "on-line", "ఆన్‌లైన్", "ఆన్లైన్లో"))
+    offline = any(token in text for token in ("offline", "off-line", "ఆఫ్‌లైన్", "ఆఫ్లైన్లో"))
+    return "online" if online and not offline else "offline" if offline and not online else ""
+
+
+def _looks_like_application_question(question: str) -> bool:
+    text = str(question).lower()
+    return any(token in text for token in (
+        "how to apply", "where to apply", "application process", "application steps", "application procedure",
+        "apply online", "apply offline", "దరఖాస్తు విధానం", "దరఖాస్తు ప్రక్రియ", "దరఖాస్తు ఎలా",
+        "ఎలా దరఖాస్తు", "ఎక్కడ దరఖాస్తు", "ఎలా అప్లై", "అప్లై ఎలా", "ఎక్కడ అప్లై",
+        "అప్లికేషన్ ప్రాసెస్", "ఎక్కడ సమర్ప"))
+
+
 def _facts_for_question(question: str, entry: dict[str, Any], fact_ids: list[str],
-                        reply_text: str) -> tuple[list[str], str]:
+                        reply_text: str, state: dict[str, Any] | None = None) -> tuple[list[str], str]:
     """Choose dedicated pack facts for document, eligibility, and apply questions."""
     text = question.lower()
+    state = state or {}
     available = {fact["id"] for fact in entry["facts"]}
     selected = ""
-    if any(word in text for word in ("document", "documents", "డాక్యుమెంట్", "పత్ర", "ఏవి తీసుకెళ్ల")):
+    method = _application_method(question) or state.get("application_method", "")
+    document_question = any(word in text for word in ("document", "documents", "డాక్యుమెంట్", "పత్ర", "ఏవి తీసుకెళ్ల"))
+    eligibility_question = any(word in text for word in (
+        "eligible", "eligibility", "who qualifies", "who is eligible", "who gets", "అర్హత", "ఎవరు అర్హులు",
+        "ఎవరికి వస్త", "ఎవరికీ వస్త", "ఎవరికి ఇస్తారు", "ఎవరికి అందుతుంది", "అద్దె", "tenant", "rented",
+        "సీడింగ్", "అనుసంధానం"))
+    application_question = _looks_like_application_question(question) or bool(
+        method and (state.get("application_choice_pending") or state.get("application_method")))
+    if document_question:
         selected = "required_documents"
-    elif any(word in text for word in ("eligible", "eligibility", "అర్హత", "ఎవరు అర్హులు",
-                                        "అద్దె", "tenant", "rented", "సీడింగ్", "అనుసంధానం")):
+    elif eligibility_question:
         selected = "eligibility_details"
-    elif any(word in text for word in ("apply", "application", "దరఖాస్తు", "అప్లై")):
-        online = "online" in text or "ఆన్‌లైన్" in text
-        offline = "offline" in text or "ఆఫ్‌లైన్" in text
-        if online and not offline and "application_online" in available:
-            selected = "application_online"
-        elif offline and not online and "application_offline" in available:
-            selected = "application_offline"
+    elif application_question or (state.get("application_choice_pending") and method):
+        if method and f"application_{method}" in available:
+            selected = f"application_{method}"
+        elif "application_process" in available:
+            selected = "application_process"
         else:
             paths = [item for item in ("application_offline", "application_online") if item in available]
             if paths:
-                return paths, ""
-            selected = "application_process"
+                return ([f"application_{method}"] if method else paths), ""
     if selected in available:
         return [selected], ""
     return fact_ids, reply_text
 
 
-def _needs_application_choice(question: str, fact_ids: list[str]) -> bool:
+def _needs_application_choice(question: str, fact_ids: list[str], state: dict[str, Any] | None = None) -> bool:
+    state = state or {}
+    if state.get("application_method") or _application_method(question):
+        return False
     if not any(fact_id in {"application_process", "application_online", "application_offline"}
                for fact_id in fact_ids):
         return False
-    text = question.lower()
-    online = "online" in text or "ఆన్‌లైన్" in text
-    offline = "offline" in text or "ఆఫ్‌లైన్" in text
-    return online == offline and (
-        "application_process" in fact_ids or
-        ("application_offline" in fact_ids and "application_online" in fact_ids))
+    return ("application_process" in fact_ids or
+            ("application_offline" in fact_ids and "application_online" in fact_ids))
 
 
 @_profile_turn
@@ -1040,15 +1133,39 @@ def route_turn(question: str, state: Any = None, history: Any = None, evidence: 
     active_id = clean_state["active_scheme_id"]
     answers = parse.get("answers", {}) if isinstance(parse.get("answers"), dict) else {}
     fact_ids = parse.get("fact_ids", [])[:3]
-    active_entry = scheme_entry(pack, active_id) if mode == "active" else None
+    active_entry = scheme_entry(pack, active_id) if mode in {"active", "paused"} else None
+    offered_entry = scheme_entry(pack, active_id) if mode == "offered" else None
+    accepted_offer = bool(
+        offered_entry and offered_entry["criteria"] and _accepts_check_offer(question)
+        and intent not in {"stop_check", "switch_scheme"}
+        and not (parse.get("scheme_id") and parse.get("scheme_id") != active_id)
+    )
+    if accepted_offer and intent != "scheme_info":
+        parse = {**parse, "intent": "start_check", "scheme_id": active_id, "answers": {}, "fact_ids": []}
+    elif accepted_offer and not parse.get("scheme_id"):
+        parse = {**parse, "scheme_id": active_id}
+    start_after_info = accepted_offer and parse["intent"] == "scheme_info"
+    chosen_method = _application_method(question)
+    is_method_choice = bool(chosen_method and (
+        clean_state.get("application_choice_pending") or
+        (active_entry and clean_state.get("application_method"))
+    ))
+    if is_method_choice:
+        parse = {**parse, "intent": "scheme_info", "scheme_id": active_id, "answers": {}, "fact_ids": []}
+        clean_state = _clean_state({**clean_state, "application_method": chosen_method,
+                                    "application_choice_pending": False})
+    intent = parse["intent"]
+    answers = parse.get("answers", {}) if isinstance(parse.get("answers"), dict) else {}
+    fact_ids = parse.get("fact_ids", [])[:3]
     if active_entry is not None:
-        if _looks_like_check_clarification(question):
+        if not is_method_choice and _looks_like_check_clarification(question):
             parse = {**parse, "intent": "check_clarification", "answers": {}}
-        elif intent in {"greeting", "about", "unrelated", "check_answer"} and not answers:
+        elif mode == "active" and intent in {"greeting", "about", "unrelated", "check_answer"} and not answers:
             pending = next((item for item in active_entry["criteria"]
                             if item["id"] == clean_state.get("pending_criterion")), None)
             value = _yes_no_fallback(question)
-            if pending is not None and value and _criterion_allowed(pending, value):
+            if (pending is not None and value and not _looks_like_application_question(question)
+                    and not _keyword_scheme(question) and _criterion_allowed(pending, value)):
                 parse = {**parse, "intent": "check_answer", "answers": {pending["id"]: value}}
         intent = parse["intent"]
         answers = parse.get("answers", {}) if isinstance(parse.get("answers"), dict) else {}
@@ -1058,13 +1175,26 @@ def route_turn(question: str, state: Any = None, history: Any = None, evidence: 
     scheme_id = parse["scheme_id"]
 
     # — running-check lanes first: answers win, everything else waits politely —
-    if mode == "active":
+    if mode in {"active", "paused"}:
         entry = scheme_entry(pack, active_id)
         if entry is None:
             clean_state = _clean_state({**clean_state, "eligibility_mode": "off"})
         else:
             if intent == "stop_check":
                 return _decline_check(clean_state, _conversation_text(parse, intent))
+            if intent == "pause_check":
+                paused = _clean_state({**clean_state, "eligibility_mode": "paused",
+                                       "pending_criterion": clean_state.get("pending_criterion", "")})
+                return {"decision": "answer", "kind": "conversation",
+                        "answer_text": _conversation_text(parse, intent), "citations": [], "next_steps": [],
+                        "state": paused, "evidence": []}
+            if intent == "resume_check" or (mode == "paused" and intent == "start_check"):
+                clean_state = _clean_state({**clean_state, "eligibility_mode": "active"})
+                mode = "active"
+            if mode == "paused" and intent in {"greeting", "about", "unrelated"}:
+                return {"decision": "answer" if intent != "unrelated" else "abstain", "kind": "conversation",
+                        "answer_text": _conversation_text(parse, intent), "citations": [], "next_steps": [],
+                        "state": _clean_state({**clean_state, "last_question": question}), "evidence": []}
             if intent == "check_clarification":
                 pending = next((item for item in entry["criteria"]
                                 if item["id"] == clean_state.get("pending_criterion")), None)
@@ -1075,13 +1205,33 @@ def route_turn(question: str, state: Any = None, history: Any = None, evidence: 
             if intent == "switch_scheme" or (intent == "scheme_info" and scheme_id and scheme_id != active_id):
                 other = scheme_entry(pack, scheme_id) if scheme_id else None
                 if other is not None and other["scheme_id"] != active_id:
-                    wiped = _new_scheme_state(clean_state, other["scheme_id"], question)
+                    paused = _save_paused_check(clean_state)
+                    wiped = _new_scheme_state(paused, other["scheme_id"], question)
                     requested_ids, reply_text = _facts_for_question(
-                        question, other, fact_ids, parse.get("reply_text", ""))
+                        question, other, fact_ids, parse.get("reply_text", ""), wiped)
                     return _scheme_info_answer(
                         pack, other, requested_ids, with_offer=True, clean_state=wiped,
                         reply_text=reply_text,
-                        ask_application_mode=_needs_application_choice(question, requested_ids))
+                        ask_application_mode=_needs_application_choice(question, requested_ids, wiped))
+            if mode == "active" and intent == "scheme_info":
+                paused = _clean_state({**clean_state, "eligibility_mode": "paused",
+                                       "pending_criterion": clean_state.get("pending_criterion", "")})
+                requested_ids, reply_text = _facts_for_question(
+                    question, entry, fact_ids, parse.get("reply_text", ""), paused)
+                return _scheme_info_answer(
+                    pack, entry, requested_ids, with_offer=False, clean_state=paused,
+                    reply_text=reply_text,
+                    ask_application_mode=_needs_application_choice(question, requested_ids, paused))
+            if mode == "paused" and intent == "scheme_info":
+                requested_ids, reply_text = _facts_for_question(
+                    question, entry, fact_ids, parse.get("reply_text", ""), clean_state)
+                return _scheme_info_answer(
+                    pack, entry, requested_ids, with_offer=False, clean_state=clean_state,
+                    reply_text=reply_text,
+                    ask_application_mode=_needs_application_choice(question, requested_ids, clean_state))
+            if mode == "paused" and intent == "check_answer" and answers:
+                clean_state = _clean_state({**clean_state, "eligibility_mode": "active"})
+                mode = "active"
             if intent in {"check_answer", "start_check", "scheme_info"}:
                 previous_facts = clean_state.get("criteria_facts", {})
                 facts = _apply_extracted_facts(previous_facts, answers, entry["criteria"])
@@ -1089,7 +1239,15 @@ def route_turn(question: str, state: Any = None, history: Any = None, evidence: 
             else:
                 previous_facts = clean_state.get("criteria_facts", {})
             if intent in {"greeting", "about", "unrelated"}:
-                # Ordinary LLM wording must leave the pending check untouched.
+                if intent == "unrelated" and mode == "active":
+                    pending = next((item for item in entry["criteria"]
+                                    if item["id"] == clean_state.get("pending_criterion")), None)
+                    if pending is None:
+                        pending = _first_pending(entry["criteria"], clean_state.get("criteria_facts", {}))
+                    if pending is not None:
+                        reply = _ask_criterion(pack, entry, clean_state, pending, repeat_prefix=True)
+                        return reply
+                # Ordinary conversation must leave the pending check untouched.
                 reply = _conversation_text(parse, intent)
                 return {"decision": "answer" if intent != "unrelated" else "abstain", "kind": "conversation",
                         "answer_text": reply, "citations": [], "next_steps": [],
@@ -1105,11 +1263,20 @@ def route_turn(question: str, state: Any = None, history: Any = None, evidence: 
                 nothing_new = clean_state.get("criteria_facts", {}) == previous_facts
                 reply = _ask_criterion(pack, entry, clean_state, pending,
                                        repeat_prefix=(intent == "start_check" and nothing_new))
-                _attach_unknown_notice(entry, reply, clean_state)
                 return reply
             return _pass_reply(pack, entry, clean_state)
 
     # — no check running —
+    if intent == "resume_check":
+        resume_id = scheme_id or _keyword_scheme(question) or active_id
+        restored = _restore_paused_check(clean_state, resume_id) if resume_id else None
+        entry = scheme_entry(pack, resume_id) if restored else None
+        if restored is not None and entry is not None:
+            pending = _first_pending(entry["criteria"], restored.get("criteria_facts", {}))
+            if pending is not None:
+                return _ask_criterion(pack, entry, restored, pending)
+            return _pass_reply(pack, entry, restored)
+
     if intent == "stop_check":
         entry = scheme_entry(pack, active_id)
         if entry is not None and mode != "off":
@@ -1127,7 +1294,6 @@ def route_turn(question: str, state: Any = None, history: Any = None, evidence: 
                     "state": _clean_state({**clean_state, "last_question": question}), "evidence": []}
         pending = _first_pending(entry["criteria"], clean_state.get("criteria_facts", {})) or entry["criteria"][0]
         reply = _ask_criterion(pack, entry, clean_state, pending)
-        _attach_unknown_notice(entry, reply, clean_state)
         return reply
 
     if intent in {"switch_scheme", "scheme_info"}:
@@ -1141,13 +1307,28 @@ def route_turn(question: str, state: Any = None, history: Any = None, evidence: 
             fresh = _new_scheme_state(clean_state, entry["scheme_id"], question)
         else:
             fresh = clean_state
+        method = _application_method(question)
+        if method and _looks_like_application_question(question):
+            fresh = _clean_state({**fresh, "application_method": method,
+                                  "application_choice_pending": False})
         requested_ids, reply_text = _facts_for_question(
-            question, entry, fact_ids, parse.get("reply_text", ""))
+            question, entry, fact_ids, parse.get("reply_text", ""), fresh)
         with_offer = not (mode in {"offered", "done"} and entry["scheme_id"] == active_id)
-        return _scheme_info_answer(
+        info_result = _scheme_info_answer(
             pack, entry, requested_ids, with_offer=with_offer, clean_state=fresh,
             reply_text=reply_text,
-            ask_application_mode=_needs_application_choice(question, requested_ids))
+            ask_application_mode=_needs_application_choice(question, requested_ids, fresh))
+        if start_after_info:
+            pending = _first_pending(entry["criteria"], info_result["state"].get("criteria_facts", {}))
+            if pending is not None:
+                ask_state = _clean_state({**info_result["state"], "eligibility_mode": "active"})
+                ask = _ask_criterion(pack, entry, ask_state, pending)
+                marker = f"[C{len(info_result['citations']) + 1}]"
+                return {**info_result, "decision": "ask",
+                        "answer_text": f"{info_result['answer_text']} {ask['answer_text'].replace('[C1]', marker)}"[:4000],
+                        "citations": info_result["citations"] + ask["citations"],
+                        "next_steps": [], "state": ask["state"]}
+        return info_result
 
     if intent == "greeting":
         return {"decision": "answer", "kind": "conversation", "answer_text": _conversation_text(parse, intent),

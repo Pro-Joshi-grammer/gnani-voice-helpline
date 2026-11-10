@@ -973,12 +973,12 @@
         },
         {
           "id": "not_tenant_farmer",
-          "question_te": "మీరు కేవలం కౌలుకు భూమి తీసుకుని సాగు చేసే రైతు కాదా?",
+          "question_te": "మీరు వేరేవారి భూమిని కౌలుకు తీసుకుని సాగు చేస్తున్నారా?",
           "answer_type": "yes_no",
-          "required": "yes",
+          "required": "no",
           "source_id": "user-provided-verified-info",
           "basis": "Regular tenant farmers are excluded from the main Rythu Bharosa scheme in the supplied information.",
-          "fail_message_te": "కౌలు రైతులు ప్రధాన రైతు భరోసా పథకంలో అర్హులు కారని అందించిన సమాచారం చెబుతోంది.",
+          "fail_message_te": "కౌలుకు తీసుకున్న భూమిలో సాగు చేసేవారికి ప్రధాన రైతు భరోసా పథకం వర్తించదని అందించిన సమాచారం చెబుతోంది.",
           "confidence": "high"
         },
         {
@@ -993,7 +993,7 @@
         },
         {
           "id": "bank_account_linked",
-          "question_te": "మీ క్రియాశీల బ్యాంక్ ఖాతా ఆధార్‌ మరియు భూమి పాస్‌బుక్‌తో లింక్ అయిందా?",
+          "question_te": "వాడుకలో ఉన్న మీ బ్యాంకు ఖాతాకు ఆధార్‌, భూమి పాస్‌బుక్‌ వివరాలు జత చేశారా?",
           "answer_type": "yes_no",
           "required": "yes",
           "source_id": "user-provided-verified-info",
@@ -1003,12 +1003,12 @@
         },
         {
           "id": "not_excluded_group",
-          "question_te": "మీరు ప్రభుత్వ ఉద్యోగి, ఆదాయపు పన్ను చెల్లింపుదారు లేదా రాజకీయ పదవిలో ఉన్నవారు కాదా?",
+          "question_te": "మీరు ప్రభుత్వ ఉద్యోగం చేస్తున్నారా, ఆదాయపు పన్ను కడుతున్నారా, లేదా రాజకీయ పదవిలో ఉన్నారా?",
           "answer_type": "yes_no",
-          "required": "yes",
+          "required": "no",
           "source_id": "user-provided-verified-info",
           "basis": "Government employees, income-tax payers and political post-holders are listed as excluded.",
-          "fail_message_te": "ప్రభుత్వ ఉద్యోగులు, ఆదాయపు పన్ను చెల్లించేవారు, రాజకీయ పదవిలో ఉన్నవారికి ఈ పథకం వర్తించదని అందించిన సమాచారం చెబుతోంది.",
+          "fail_message_te": "ప్రభుత్వ ఉద్యోగం చేస్తున్నవారు, ఆదాయపు పన్ను కట్టేవారు లేదా రాజకీయ పదవిలో ఉన్నవారికి ఈ పథకం వర్తించదని అందించిన సమాచారం చెబుతోంది.",
           "confidence": "high"
         }
       ],

@@ -382,17 +382,99 @@ class EligibilityFlowTurns(RouteTurnBase):
         self.assertEqual(result["state"]["eligibility_mode"], "offered")
         self.assertNotIn("owns_house", result["answer_text"], "old scheme results must not be summarized into the new scheme")
 
-    def test_unknown_in_sources_topic_is_noticed_once_and_flow_continues(self):
+    def test_eligibility_question_does_not_append_unasked_unknown_topics(self):
         with mock_parse("start_check", RYTHU):
             first = engine.route_turn("రైతు తనిఖీ మొదలుపెడ్డాం", None, None, [])
         self.assertEqual(first["decision"], "ask")
         notices = [u["notice_te"] for u in engine.scheme_entry(engine.load_pack(), RYTHU)["unknown_in_sources"]]
-        shown = next((n for n in notices if n in first["answer_text"]), None)
-        self.assertIsNotNone(shown, "a topic missing from sources must be honestly noticed")
+        self.assertFalse(any(notice in first["answer_text"] for notice in notices))
         with mock_parse("check_answer", "", answers={"telangana_resident": "yes"}):
             second = engine.route_turn("అవును ఇక్కడే ఉన్నా", first["state"], None, [])
         self.assertEqual(second["decision"], "ask")
-        self.assertNotIn(shown, second["answer_text"], "the unknown notice must appear exactly once")
+        self.assertFalse(any(notice in second["answer_text"] for notice in notices))
+
+
+class ConversationCheckpoint(RouteTurnBase):
+    def test_pause_and_explicit_resume_preserve_pending_criterion(self):
+        state = active_state(INDIRAMMA, "owns_house", {"telangana_family": {"value": "yes"}})
+        paused = self.turn("తర్వాత చూద్దాం", state, mock=mock_parse("pause_check"))
+        self.assertEqual(paused["state"]["eligibility_mode"], "paused")
+        self.assertEqual(paused["state"]["pending_criterion"], "owns_house")
+        resumed = self.turn("అర్హత చెక్ కొనసాగించు", paused["state"], mock=mock_parse("resume_check"))
+        self.assertEqual(resumed["state"]["eligibility_mode"], "active")
+        self.assertEqual(resumed["state"]["pending_criterion"], "owns_house")
+
+    def test_scheme_question_pauses_without_advancing_pending_criterion(self):
+        state = active_state(INDIRAMMA, "owns_house")
+        result = self.turn("ఇంటి పథకం వివరాలు", state,
+                           mock=mock_parse("scheme_info", INDIRAMMA))
+        self.assertEqual(result["state"]["eligibility_mode"], "paused")
+        self.assertEqual(result["state"]["pending_criterion"], "owns_house")
+        self.assertNotIn("owns_house", result["state"]["criteria_facts"])
+
+    def test_uncertain_answer_does_not_pause_or_fill_pending_criterion(self):
+        state = active_state(INDIRAMMA, "owns_house")
+        result = self.turn("ఎలా చెప్పనో తెలియదు", state,
+                           mock=mock_parse("check_answer", answers={"owns_house": "maybe"}))
+        self.assertEqual(result["state"]["eligibility_mode"], "active")
+        self.assertNotIn("owns_house", result["state"]["criteria_facts"])
+
+    def test_application_choice_is_remembered_and_resolves_the_offer(self):
+        state = {"active_scheme_id": INDIRAMMA, "eligibility_mode": "offered",
+                 "application_choice_pending": True}
+        result = self.turn("ఆఫ్‌లైన్", state, mock=mock_parse("unrelated"))
+        self.assertEqual(result["state"]["application_method"], "offline")
+        self.assertFalse(result["state"]["application_choice_pending"])
+
+    def test_application_intention_does_not_override_who_qualifies_question(self):
+        entry = engine.scheme_entry(engine.load_pack(), RYTHU)
+        selected, _ = engine._facts_for_question(
+            "నేను రైతు భరోసాకు అప్లై చేద్దాం అనుకుంటున్నా అసలు రైతు భరోసా ఏంది ఎవరికి వస్తది",
+            entry, ["application_offline", "application_online"], "")
+        self.assertEqual(selected, ["eligibility_details"])
+
+    def test_accepting_offer_while_asking_for_documents_starts_check_after_answer(self):
+        state = {"active_scheme_id": RYTHU, "eligibility_mode": "offered"}
+        result = self.turn("ఆ అవును చూడాలనుకుంటున్నా అసలు ఏమేం డాక్యుమెంట్స్ కావాలి నీకు",
+                           state, mock=mock_parse("scheme_info", RYTHU, fact_ids=["required_documents"]))
+        self.assertEqual(result["decision"], "ask")
+        self.assertEqual(result["state"]["eligibility_mode"], "active")
+        self.assertEqual(result["state"]["pending_criterion"], "telangana_resident")
+        self.assertIn("పత్రాలు", result["answer_text"])
+        self.assertIn("[C2]", result["answer_text"])
+
+    def test_clear_ask_me_acceptance_overrides_misclassified_unrelated_turn(self):
+        state = {"active_scheme_id": RYTHU, "eligibility_mode": "offered"}
+        result = self.turn("ఆ నేను తెలుసుకోవాలనుకుంటున్న ఆరోగ్యం లేదా అడగండి", state,
+                           mock=mock_parse("unrelated"))
+        self.assertEqual(result["decision"], "ask")
+        self.assertEqual(result["state"]["eligibility_mode"], "active")
+        self.assertEqual(result["state"]["pending_criterion"], "telangana_resident")
+
+    def test_unclassified_active_check_turn_repeats_pending_question(self):
+        state = active_state(RYTHU, "age_18_59", {
+            "telangana_resident": {"value": "yes"},
+            "eligible_agri_category": {"value": "yes"},
+            "not_tenant_farmer": {"value": "no"},
+        })
+        result = self.turn("అవును అట్లాంటిది ఏం లేదు మాకు", state, mock=mock_parse("unrelated"))
+        self.assertEqual(result["decision"], "ask")
+        self.assertEqual(result["state"]["eligibility_mode"], "active")
+        self.assertEqual(result["state"]["pending_criterion"], "age_18_59")
+
+    def test_plain_no_to_excluded_job_question_is_accepted_as_eligible(self):
+        state = active_state(RYTHU, "not_excluded_group", {
+            "telangana_resident": {"value": "yes"},
+            "eligible_agri_category": {"value": "yes"},
+            "not_tenant_farmer": {"value": "no"},
+            "age_18_59": {"value": "yes"},
+            "bank_account_linked": {"value": "yes"},
+        })
+        result = self.turn("అట్లాంటి ఉద్యోగం ఏం లేదు", state,
+                           mock=mock_parse("check_answer", answers={"not_excluded_group": "no"}))
+        self.assertEqual(result["decision"], "answer")
+        self.assertEqual(result["state"]["eligibility_mode"], "done")
+        self.assertIn("అర్హత ఉన్నట్లు కనిపిస్తోంది", result["answer_text"])
 
 
 class AnswerSlotSafety(RouteTurnBase):
